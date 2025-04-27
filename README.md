@@ -9,12 +9,13 @@ The software and data in this repository are a snapshot of the software and data
 To cite the contents of this repository, please cite both the paper and this repo, using their respective DOIs.
 
 *** Enter DOI link for paper ***
+
 *** Enter DOI link for code ***
 
 Below is the BibTex for citing this snapshot of the repository.
 
 ```bibtex
-@misc{ACOTS_GuoNagarajanBodur2025,
+@article{ACOTS_GuoNagarajanBodur2025,
   author =        {Cheng Guo, Harsha Nagarajan, Merve Bodur},
   publisher =     {INFORMS Journal on Computing},
   title =         {Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem},
@@ -49,4 +50,4 @@ Run the code and algorithm with the packages of these versions:
 - Julia - vXXX 
 - JuMP - vXXX 
 - Gurobi - vXXX 
-
+- PGLib instances repo version
