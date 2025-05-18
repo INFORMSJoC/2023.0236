@@ -87,7 +87,7 @@ Note that instances are run with warm-start files, which are located in [results
 #### Table 3 and Table 5
 To obtain the results with the spanning tree heuristic: In "params.jl", set `params["span_tree"] = true`. Then in line 54 of "tests.jl", set `args[3] = "1e-3"` and `args[7] = "3"`. The other settings for "E", "EC", "ECB", and "ECB*" instances are the same as in the previous section for Table 2 and Table 4.
 
-### Figure 4
+#### Figure 4
 In "params.jl", set `params["load_multiplier"]` to varying levels of multipliers from 1.0 to 1.16 with a step size 0.01. In line 54 of "tests.jl", set `args[1] = 54`, `args[2] = 54`, and `args[4] = "tri"`, then run the "test.jl" file. The number of lines that are turned off is reported in the column "num_off_lines" of the printed csv file.
 
 #### Table 6
