@@ -51,7 +51,7 @@ function parse_args(li)
    return args
 end
 # Input: [index of start instances, index of finish instance, grb_feas_tol, relax, warm_start, repeat_first_inst, time_limit(hour), run_obbt, cycle_cuts, callback]
-args = parse_args([72, 72, 1e-6, "tri", false, false, 2, false, false, false]) # tri, rmc # 1, 17, 24*3 = 72
+args = parse_args([1, 72, 1e-6, "tri", false, false, 2, false, false, false]) # tri, rmc # 1, 17, 24*3 = 72
 # length(inst_li)
 
 #-----------------;
