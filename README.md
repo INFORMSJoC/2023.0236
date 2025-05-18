@@ -61,21 +61,35 @@ Run the code and algorithm with the softwares and library of these versions:
 The Project.toml and Manifest.toml files specify package dependencies of the Julia code.
 
 ### Figure 2
+Run the "cyc_ext_mc_plot.jl" file.
 
 ### UB in Table 2 and Table 4
+*Note that the code runs all 72 instances by default. If you would like to run only the first instance, then in line 54 of "tests.jl" set `args[2] = 1`.*
+
 To obtain the values in the "UB" column of Table 2 and Table 4, we obtain the minimum of the following 4 values:
-- Non-convex ACOTS model (1) with the Knitro solver: In "params.jl", set `params["ots_exact_pm"] = true`, then run the "test.jl" file.
+- Non-convex ACOTS model (1) with the Knitro solver: In "params.jl", set `params["ots_exact_pm"] = true` and `params["minlp_solver"] = "knitro"`, then run the "test.jl" file.
 - Non-convex ACOTS model (1) with the Juniper solver: In "params.jl", set `params["ots_exact_pm"] = true` and `params["minlp_solver"] = "juniper"`, then run the "test.jl" file.
 - Non-convex ACOPF model with all lines switched on: In "params.jl", set `params["model"] = "opf"` and `params["opf_exact_pm"] = true`, then run the "test.jl" file.
 - Non-convex ACOPF model with the set of lines switched off, as indicated by the ACOTS-QC solutions: In "params.jl", set `params["model"] = "opf"`, `params["opf_exact_pm"] = true`, and `params["turn_off_lines"] = true`, then run the "test.jl" file.
 
-The result is available at [results/ub.xlsx](results/ub.xlsx)
-
 ### Other columns in Table 2 and Table 4
 - Column "P": In line 54 of "tests.jl", set `args[4] = "rmc"` and `args[5] = true`, then run the "test.jl" file.
-- Column "E": In line 54 of "tests.jl", set `args[4] = "tri"` and `args[5] = true`, then run the "test.jl" file. 
-- Column "EC":
-- Column "ECB":
-- Column "ECB*":
+- Column "E": In line 54 of "tests.jl", set `args[4] = "tri"` and `args[5] = true`, then run the "test.jl" file.
+- Column "EC": In line 54 of "tests.jl", set `args[3] = "1e-4"`, `args[4] = "tri"`, `args[5] = true`, and `args[9] = "true"`, then run the "test.jl" file.
+- Column "ECB": In line 54 of "tests.jl", set `args[4] = "tri"`, `args[5] = true`, `args[8] = "true"`, and `args[9] = "true"`, then run the "test.jl" file.
+- Column "ECB*": In line 54 of "tests.jl", set `args[3] = "1e-4"`, `args[4] = "tri"`, `args[5] = true`, `args[8] = "true"`, `args[9] = "true"`, and `args[10] = "true"`, then run the "test.jl" file.
 
-Note that instances are run with warm-start files, which are located in [results/opf_sol](results/opf_sol). To generate warm-start files for a specific instances, ???.
+Note that instances are run with warm-start files, which are located in [results/opf_sol](results/opf_sol). The warm-start files can be generated as follows:
+- For column "P": In "params.jl", set `params["model"] = "opf"` and `params["write_sol"] = true`. In line 54 of "tests.jl", set `args[4] = "rmc"`. Then run the "test.jl" file.
+- For column "E": In "params.jl", set `params["model"] = "opf"` and `params["write_sol"] = true`. In line 54 of "tests.jl", set `args[4] = "tri"`. Then run the "test.jl" file.
+- For column "EC", "ECB", and "ECB*": In "params.jl", set `params["model"] = "opf"` and `params["write_sol"] = true`. In line 54 of "tests.jl", set `args[4] = "tri"` and `args[9] = "true"`. Then run the "test.jl" file.
+
+### Table 3 and Table 5
+To obtain the results with the spanning tree heuristic: In "params.jl", set `params["span_tree"] = true`. Then in line 54 of "tests.jl", set `args[3] = "1e-3"` and `args[7] = "3"`. The other settings for "E", "EC", "ECB", and "ECB*" instances are the same as in the previous section for Table 2 and Table 4.
+
+### Figure 4
+In "params.jl", set `params["load_multiplier"]` to varying levels of multipliers from 1.0 to 1.16 with a step size 0.01. In line 54 of "tests.jl", set `args[1] = 54`, `args[2] = 54`, and `args[4] = "tri"`, then run the "test.jl" file. The number of lines that are turned off is reported in the column "num_off_lines" of the printed csv file.
+
+### Table 6
+- Column "E": In "params.jl", set `params["model"] = "opf"`, then run the "test.jl" file.
+- Column "EC": In "params.jl", set `params["model"] = "opf"`. Then in line 54 of "tests.jl", set `args[9] = "true"`, then run the "test.jl" file.
