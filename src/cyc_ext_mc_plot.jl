@@ -33,11 +33,11 @@ function ext_gap(i)
    m = Model(() -> Gurobi.Optimizer(GRB_ENV))
    set_optimizer_attributes(m, "OutputFlag" => 0)
 
-   # @variable(m, lb <= x[k in 1:N] <= ub)
-   @variable(m, x_lift[p in P])
-   @variable(m, λ[l in 1:(2^N)] >= 0)
+   # JuMP.@variable(m, lb <= x[k in 1:N] <= ub)
+   JuMP.@variable(m, x_lift[p in P])
+   JuMP.@variable(m, λ[l in 1:(2^N)] >= 0)
 
-   @objective(m, Max, sum(x_lift[p] for p in P))
+   JuMP.@objective(m, Max, sum(x_lift[p] for p in P))
 
    # @constraints(m, begin
    #      pts[i, 3] == x_lift[(1,2)] - x_lift[(4,5)]
@@ -48,7 +48,7 @@ function ext_gap(i)
    #      pts[i, 5] == x_lift[(1,6)] - x_lift[(3,4)]
    #      sum(λ[l] for l in 1:(2^N)) == 1
    # end)
-   @constraint(m, sum(λ[l] for l in 1:(2^N)) == 1)
+   JuMP.@constraint(m, sum(λ[l] for l in 1:(2^N)) == 1)
    for k in 1:N
     expr_1 = 0
     expr_2 = 0
@@ -61,16 +61,16 @@ function ext_gap(i)
         expr_2 += λ[l]
      end
     end
-    @constraint(m, pts[i, k] == lb * expr_1 + ub * expr_2)
+    JuMP.@constraint(m, pts[i, k] == lb * expr_1 + ub * expr_2)
    end
-   @constraint(m, [p in P], x_lift[p] == sum(λ[l] * X[l][p[1]] * X[l][p[2]] for l in 1:(2^N)))
+   JuMP.@constraint(m, [p in P], x_lift[p] == sum(λ[l] * X[l][p[1]] * X[l][p[2]] for l in 1:(2^N)))
    # print(m)
    JuMP.optimize!(m)
-   max_obj = objective_value(m)
+   max_obj = JuMP.objective_value(m)
 
-   @objective(m, Min, sum(x_lift[p] for p in P))
+   JuMP.@objective(m, Min, sum(x_lift[p] for p in P))
    JuMP.optimize!(m)
-   min_obj = objective_value(m)
+   min_obj = JuMP.objective_value(m)
 
    gap = max_obj - min_obj
 
@@ -81,17 +81,17 @@ function rm_gap(i)
    m = Model(() -> Gurobi.Optimizer(GRB_ENV))
    set_optimizer_attributes(m, "OutputFlag" => 0)
 
-   # @variable(m, lb <= x[k in 1:N] <= ub)
-   @variable(m, x_lift[p in P])
-   @variable(m, λ[l in 1:(2^N)] >= 0)
+   # JuMP.@variable(m, lb <= x[k in 1:N] <= ub)
+   JuMP.@variable(m, x_lift[p in P])
+   JuMP.@variable(m, λ[l in 1:(2^N)] >= 0)
 
-   @objective(m, Max, sum(x_lift[p] for p in P))
+   JuMP.@objective(m, Max, sum(x_lift[p] for p in P))
 
    function mcc(m,xy,x,y)
-     @constraint(m, xy >= lb*y + lb*x - lb*lb)
-     @constraint(m, xy >= ub*y + ub*x - ub*ub)
-     @constraint(m, xy <= lb*y + ub*x - lb*ub)
-     @constraint(m, xy <= ub*y + lb*x - ub*lb)
+     JuMP.@constraint(m, xy >= lb*y + lb*x - lb*lb)
+     JuMP.@constraint(m, xy >= ub*y + ub*x - ub*ub)
+     JuMP.@constraint(m, xy <= lb*y + ub*x - lb*ub)
+     JuMP.@constraint(m, xy <= ub*y + lb*x - ub*lb)
      return m
    end
 
@@ -100,11 +100,11 @@ function rm_gap(i)
    end
 
    JuMP.optimize!(m)
-   max_obj = objective_value(m)
+   max_obj = JuMP.objective_value(m)
 
-   @objective(m, Min, sum(x_lift[p] for p in P))
+   JuMP.@objective(m, Min, sum(x_lift[p] for p in P))
    JuMP.optimize!(m)
-   min_obj = objective_value(m)
+   min_obj = JuMP.objective_value(m)
 
    gap = max_obj - min_obj
 

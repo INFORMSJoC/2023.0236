@@ -91,7 +91,7 @@ function variables(_m, ref, params)
    # bd_data["td_M"] = sum(td_u_sorted[i] for i in 1:(length(ref[:bus]) - 1))
    bd_data["td_M"] = sum(td_u_sorted[i] for i in 1:length(td_u_sorted))
 
-   @variables(_m, begin
+   JuMP.@variables(_m, begin
       # voltage angle and magnitude
       va[i in keys(ref[:bus])]
 
@@ -101,7 +101,7 @@ function variables(_m, ref, params)
    end)
    # println("bp_li: ", bp_li)
    if params["model"] == "opf"
-      @variables(_m, begin
+      JuMP.@variables(_m, begin
          # voltage angle and magnitude
          ref[:bus][i]["vmin"] <= vm[i in keys(ref[:bus])] <= ref[:bus][i]["vmax"]
 
@@ -130,12 +130,12 @@ function variables(_m, ref, params)
          # 0 <= cm[bp in bp_li] <= cm_ub[bp]
       end)
       if params["extra_rlt"]
-         @variable(_m, 0 <= cm[bp in bp_li] <= cm_ub[bp])
+         JuMP.@variable(_m, 0 <= cm[bp in bp_li] <= cm_ub[bp])
       else
-         @variable(_m, 0 <= cm[bp in keys(ref[:buspairs])] <= cm_ub[bp])
+         JuMP.@variable(_m, 0 <= cm[bp in keys(ref[:buspairs])] <= cm_ub[bp])
       end
    elseif params["model"] == "ots" || params["model"] == "ots_relax"
-      @variables(_m, begin
+      JuMP.@variables(_m, begin
          ref[:bus][i]["vmin"] <= vm[i in keys(ref[:bus])] <= ref[:bus][i]["vmax"]
          # vm[i in keys(ref[:bus])]
 
@@ -162,58 +162,58 @@ function variables(_m, ref, params)
          wz[bp in bp_li]
       end)
       if params["extra_rlt"]
-         @variable(_m, cm[bp in bp_li])
+         JuMP.@variable(_m, cm[bp in bp_li])
       else
-         @variable(_m, cm[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, cm[bp in keys(ref[:buspairs])])
       end
       # Line On-Off variables
       if params["model"] == "ots" && params["turn_on_lines"] == false
-         @variable(_m, z[bp in keys(ref[:buspairs])], Bin)
+         JuMP.@variable(_m, z[bp in keys(ref[:buspairs])], Bin)
       elseif params["model"] == "ots" && params["turn_on_lines"] == true
-         @variable(_m, z[bp in keys(ref[:buspairs])] == 1)
+         JuMP.@variable(_m, z[bp in keys(ref[:buspairs])] == 1)
       elseif params["model"] == "ots_relax"
-         @variable(_m, 0 <= z[bp in keys(ref[:buspairs])] <= 1)
+         JuMP.@variable(_m, 0 <= z[bp in keys(ref[:buspairs])] <= 1)
       end
    end
 
    if params["relax"] == "rmc"
       # VV variables
       if params["model"] == "opf"
-         @variable(_m, ref[:buspairs][bp]["vm_fr_min"] * ref[:buspairs][bp]["vm_to_min"] <= vv[bp in keys(ref[:buspairs])] <= ref[:buspairs][bp]["vm_fr_max"] * ref[:buspairs][bp]["vm_to_max"])
+         JuMP.@variable(_m, ref[:buspairs][bp]["vm_fr_min"] * ref[:buspairs][bp]["vm_to_min"] <= vv[bp in keys(ref[:buspairs])] <= ref[:buspairs][bp]["vm_fr_max"] * ref[:buspairs][bp]["vm_to_max"])
       elseif params["model"] == "ots" || params["model"] == "ots_relax"
-         @variable(_m, vv[bp in keys(ref[:buspairs])])
-         @variable(_m, vmz[bp in bp_li])
-         # @variable(_m, vvz[bp in keys(ref[:buspairs])])
-         # @variable(_m, csz[bp in bp_li])
-         # @variable(_m, siz[bp in bp_li])
+         JuMP.@variable(_m, vv[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, vmz[bp in bp_li])
+         # JuMP.@variable(_m, vvz[bp in keys(ref[:buspairs])])
+         # JuMP.@variable(_m, csz[bp in bp_li])
+         # JuMP.@variable(_m, siz[bp in bp_li])
       end
    elseif params["relax"] == "tri"
       # Non-neg lambda multipliers
-      @variable(_m, 0 <= λ_wr[bp in keys(ref[:buspairs]), 1:8] <= 1)
-      @variable(_m, 0 <= λ_wi[bp in keys(ref[:buspairs]), 1:8] <= 1)
+      JuMP.@variable(_m, 0 <= λ_wr[bp in keys(ref[:buspairs]), 1:8] <= 1)
+      JuMP.@variable(_m, 0 <= λ_wi[bp in keys(ref[:buspairs]), 1:8] <= 1)
       # if params["model"] == "ots" || params["model"] == "ots_relax"
-      #    @variable(_m, 0 <= λ_hat[(i,j) in keys(ref[:buspairs]), 1:2, 1:2] <= 1)
+      #    JuMP.@variable(_m, 0 <= λ_hat[(i,j) in keys(ref[:buspairs]), 1:2, 1:2] <= 1)
       # end
       if params["rlt_cuts"]
 
-         @variable(_m, wcc[bp in keys(ref[:buspairs])])
-         @variable(_m, wss[bp in keys(ref[:buspairs])])
-         #@variable(_m, c_λ_wr[bp in keys(ref[:buspairs]), 1:8])
-         #@variable(_m, s_λ_wi[bp in keys(ref[:buspairs]), 1:8])
+         JuMP.@variable(_m, wcc[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, wss[bp in keys(ref[:buspairs])])
+         #JuMP.@variable(_m, c_λ_wr[bp in keys(ref[:buspairs]), 1:8])
+         #JuMP.@variable(_m, s_λ_wi[bp in keys(ref[:buspairs]), 1:8])
 
-         @variable(_m, vc_i[bp in keys(ref[:buspairs])])
-         @variable(_m, vc_j[bp in keys(ref[:buspairs])])
-         @variable(_m, vs_i[bp in keys(ref[:buspairs])])
-         @variable(_m, vs_j[bp in keys(ref[:buspairs])])
-         @variable(_m, c_λ_wr[bp in keys(ref[:buspairs]), 1:8])
-         @variable(_m, s_λ_wi[bp in keys(ref[:buspairs]), 1:8])
+         JuMP.@variable(_m, vc_i[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, vc_j[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, vs_i[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, vs_j[bp in keys(ref[:buspairs])])
+         JuMP.@variable(_m, c_λ_wr[bp in keys(ref[:buspairs]), 1:8])
+         JuMP.@variable(_m, s_λ_wi[bp in keys(ref[:buspairs]), 1:8])
       end
    end
 
    # # Lifted variables for OTS formulation
    # if (params["model"] == "ots") || (params["model"] == "ots_relax")
-   #    @variable(_m, 0 <= zw_fr[bp in keys(ref[:buspairs])] <= ref[:buspairs][bp]["vm_fr_max"]^2)
-   #    @variable(_m, 0 <= zw_to[bp in keys(ref[:buspairs])] <= ref[:buspairs][bp]["vm_to_max"]^2)
+   #    JuMP.@variable(_m, 0 <= zw_fr[bp in keys(ref[:buspairs])] <= ref[:buspairs][bp]["vm_fr_max"]^2)
+   #    JuMP.@variable(_m, 0 <= zw_to[bp in keys(ref[:buspairs])] <= ref[:buspairs][bp]["vm_to_max"]^2)
    # end
    cycle_3_4 = []
    if ((params["model"] == "ots") || (params["model"] == "ots_relax")) && params["cycle_cuts"]
@@ -227,9 +227,9 @@ function variables(_m, ref, params)
       end
 
       if params["model"] == "ots"
-         @variable(_m, zc[cyc in cycle_3_4], Bin)
+         JuMP.@variable(_m, zc[cyc in cycle_3_4], Bin)
       elseif params["model"] == "ots_relax"
-         @variable(_m, 0 <= zc[cyc in cycle_3_4] <= 1)
+         JuMP.@variable(_m, 0 <= zc[cyc in cycle_3_4] <= 1)
       end
    end
 
@@ -338,10 +338,10 @@ function variables(_m, ref, params)
       end
       if params["cycle_relax"] == "mc"
          if params["cycle_c_s_cuts"]
-            @variable(_m, hcc[ap in arcpairs]) # lifted variable for cs * cs, for McCormick
-            @variable(_m, hss[ap in arcpairs])
-            @variable(_m, hcs[ap in arcpairs])
-            @variable(_m, hsc[ap in arcpairs])
+            JuMP.@variable(_m, hcc[ap in arcpairs]) # lifted variable for cs * cs, for McCormick
+            JuMP.@variable(_m, hss[ap in arcpairs])
+            JuMP.@variable(_m, hcs[ap in arcpairs])
+            JuMP.@variable(_m, hsc[ap in arcpairs])
             vars["hcc"] = hcc
             vars["hss"] = hss
             vars["hcs"] = hcs
@@ -349,8 +349,8 @@ function variables(_m, ref, params)
          end
 
          if params["cycle_wr_wi_cuts"]
-            @variable(_m, wwr[ba in busarcpairs]) # lifted variable for w * wr, for McCormick
-            @variable(_m, wwi[ba in busarcpairs])
+            JuMP.@variable(_m, wwr[ba in busarcpairs]) # lifted variable for w * wr, for McCormick
+            JuMP.@variable(_m, wwi[ba in busarcpairs])
             vars["wwr"] = wwr
             vars["wwi"] = wwi
 
@@ -364,7 +364,7 @@ function variables(_m, ref, params)
                wri_bounds[ap] = Get_bounds([wr[ap[1]], wi[ap[2]]])
                wir_bounds[ap] = Get_bounds([wi[ap[1]], wr[ap[2]]])
             end
-            @variables(_m, begin
+            JuMP.@variables(_m, begin
                wrr_bounds[ap][1] <= wrr[ap in arcpairs] <= wrr_bounds[ap][2] # lifted variable for wr * wr, for McCormick
                wii_bounds[ap][1] <= wii[ap in arcpairs] <= wii_bounds[ap][2]
                wri_bounds[ap][1] <= wri[ap in arcpairs] <= wri_bounds[ap][2]
@@ -375,10 +375,10 @@ function variables(_m, ref, params)
             vars["wri"] = wri
             vars["wir"] = wir
 
-            @variable(_m, wwrr[ba in busarctuples])
-            @variable(_m, wwii[ba in busarctuples])
-            @variable(_m, wwri[ba in busarctuples])
-            @variable(_m, wwir[ba in busarctuples])
+            JuMP.@variable(_m, wwrr[ba in busarctuples])
+            JuMP.@variable(_m, wwii[ba in busarctuples])
+            JuMP.@variable(_m, wwri[ba in busarctuples])
+            JuMP.@variable(_m, wwir[ba in busarctuples])
             vars["wwrr"] = wwrr
             vars["wwii"] = wwii
             vars["wwri"] = wwri
@@ -397,8 +397,8 @@ function variables(_m, ref, params)
             cyc_i[4] = 1:2^8
             cyc_ep[3] = expairs_3
             cyc_ep[4] = expairs_4
-            @variable(_m, λ_c[cyc in cycle_3_4, cyc_i[length(cyc)]] >= 0)
-            @variable(_m, x_c[cyc in cycle_3_4, ep in cyc_ep[length(cyc)]])
+            JuMP.@variable(_m, λ_c[cyc in cycle_3_4, cyc_i[length(cyc)]] >= 0)
+            JuMP.@variable(_m, x_c[cyc in cycle_3_4, ep in cyc_ep[length(cyc)]])
             vars["λ_c"] = λ_c
             vars["x_c"] = x_c
          end
@@ -412,8 +412,8 @@ function variables(_m, ref, params)
             end
             cyc_ep[3] = expairs_w_3
             cyc_ep[4] = expairs_w_4
-            @variable(_m, λ_w[cyc in cycle_3_4, cyc_i[length(cyc)]] >= 0)
-            @variable(_m, x_w[cyc in cycle_3_4, ep in cyc_ep[length(cyc)]])
+            JuMP.@variable(_m, λ_w[cyc in cycle_3_4, cyc_i[length(cyc)]] >= 0)
+            JuMP.@variable(_m, x_w[cyc in cycle_3_4, ep in cyc_ep[length(cyc)]])
             vars["λ_w"] = λ_w
             vars["x_w"] = x_w
          end

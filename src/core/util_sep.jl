@@ -111,10 +111,10 @@ function create_x(params, m_sp, cyc_size, cs_w)
       push!(arcpairs, ((1, 2), (2, 3)))
       push!(arcpairs, ((2, 3), (1, 3)))
       push!(arcpairs, ((1, 3), (1, 2)))
-      @variable(m_sp, hcc[ap in arcpairs]) # lifted variable for cs * cs, for McCormick
-      @variable(m_sp, hss[ap in arcpairs])
-      @variable(m_sp, hcs[ap in arcpairs])
-      @variable(m_sp, hsc[ap in arcpairs])
+      JuMP.@variable(m_sp, hcc[ap in arcpairs]) # lifted variable for cs * cs, for McCormick
+      JuMP.@variable(m_sp, hss[ap in arcpairs])
+      JuMP.@variable(m_sp, hcs[ap in arcpairs])
+      JuMP.@variable(m_sp, hsc[ap in arcpairs])
       for ap in arcpairs
         push!(x, hcc[ap])
         push!(x, hss[ap])
@@ -131,7 +131,7 @@ function create_x(params, m_sp, cyc_size, cs_w)
       push!(busarcpairs, (2, 1, 3))
       push!(busarcpairs, (3, 1, 2))
       push!(busarcpairs, (1, 2, 3))
-      @variables(m_sp, begin
+      JuMP.@variables(m_sp, begin
         wwr[ba in busarcpairs]
         wwi[ba in busarcpairs]
         wrr[ap in arcpairs]
@@ -161,7 +161,7 @@ function create_x(params, m_sp, cyc_size, cs_w)
       push!(arcpairs, ((1, 4), (3, 4)))
       push!(arcpairs, ((2, 3), (3, 4)))
       push!(arcpairs, ((1, 4), (1, 2)))
-      @variables(m_sp, begin
+      JuMP.@variables(m_sp, begin
         hcc[ap in arcpairs]
         hss[ap in arcpairs]
         hcs[ap in arcpairs]
@@ -187,8 +187,8 @@ function create_x(params, m_sp, cyc_size, cs_w)
   if params["cycle_relax"] == "epr" && cyc_size == 3
     if cs_w == "cs"
       expairs_3 = [(1,2), (4,5), (1,5), (2,4), (2,3), (5,6), (2,6), (3,5), (1,3), (4,6), (3,4), (1,6)]
-      @variable(m_sp, λ_c[1:(2^6)] >= 0)
-      @variable(m_sp, x_c[ep in expairs_3])
+      JuMP.@variable(m_sp, λ_c[1:(2^6)] >= 0)
+      JuMP.@variable(m_sp, x_c[ep in expairs_3])
       for ep in expairs_3
         push!(x, x_c[ep])
       end
@@ -198,8 +198,8 @@ function create_x(params, m_sp, cyc_size, cs_w)
       specs["num_vars_li"][1] = length(x)
     elseif cs_w == "w"
       expairs_w_3 = [(1,2), (4,5), (1,5), (2,4), (2,3), (5,6), (2,6), (3,5), (1,3), (4,6), (3,4), (1,6), (8,3), (8,6), (9,1), (9,4), (7,2), (7,5)]
-      @variable(m_sp, λ_w[1:(2^9)] >= 0)
-      @variable(m_sp, x_w[ep in expairs_w_3])
+      JuMP.@variable(m_sp, λ_w[1:(2^9)] >= 0)
+      JuMP.@variable(m_sp, x_w[ep in expairs_w_3])
       for ep in expairs_w_3
         push!(x, x_w[ep])
       end
@@ -212,8 +212,8 @@ function create_x(params, m_sp, cyc_size, cs_w)
   if params["cycle_relax"] == "epr" && cyc_size == 4
     if cs_w == "cs"
       expairs_4 = [(1,3), (5,7), (2,4), (6,8), (1,7), (3,5), (4,6), (2,8), (1,2), (5,6), (3,4), (7,8), (1,6), (2,5), (4,7), (3,8), (2,3), (6,7), (1,4), (5,8), (2,7), (3,6), (4,5), (1,8)]
-      @variable(m_sp, λ_c[1:(2^8)] >= 0)
-      @variable(m_sp, x_c[ep in expairs_4])
+      JuMP.@variable(m_sp, λ_c[1:(2^8)] >= 0)
+      JuMP.@variable(m_sp, x_c[ep in expairs_4])
       for ep in expairs_4
         push!(x, x_c[ep])
       end
@@ -228,8 +228,8 @@ function create_x(params, m_sp, cyc_size, cs_w)
           append!(expairs_w_4, [(1,2, 12), (5,6, 12), (3,4,10), (7,8,10), (1,6,12), (2,5,12), (4,7,10), (3,8,10), (2,3,9), (6,7,9), (1,4,11), (5,8,11), (2,7,9), (3,6,9), (4,5,11), (1,8,11)])
           num_master_var = 12
       end
-      @variable(m_sp, λ_w[1:(2^num_master_var)] >= 0)
-      @variable(m_sp, x_w[ep in expairs_w_4])
+      JuMP.@variable(m_sp, λ_w[1:(2^num_master_var)] >= 0)
+      JuMP.@variable(m_sp, x_w[ep in expairs_w_4])
       for ep in expairs_w_4
         push!(x, x_w[ep])
       end
@@ -872,7 +872,7 @@ function sp_per_cyc(cyc_size, m_sp, params, cs_w)
   A_eq = create_Aeq(params, cyc_size, x, cs_w) # conefficient matrix for equality constraints
   num_constr_eq = size(A_eq)[1]
   b_eq = zeros(num_constr_eq)
-  @constraint(m_sp, gamma_eq[i = 1:num_constr_eq], sum(A_eq[i][j] * x[j] for j in 1:length(x)) == b_eq[i])
+  JuMP.@constraint(m_sp, gamma_eq[i = 1:num_constr_eq], sum(A_eq[i][j] * x[j] for j in 1:length(x)) == b_eq[i])
 
   A_ieq = nothing
   b_ieq = nothing
@@ -881,9 +881,9 @@ function sp_per_cyc(cyc_size, m_sp, params, cs_w)
     A_ieq = create_Aieq(params, cyc_size, x, cs_w) # coefficient matrix for inequality constraints.
     num_constr_ieq = size(A_ieq)[1]
     b_ieq = zeros(num_constr_ieq)
-    @constraint(m_sp, gamma_ieq[i = 1:num_constr_ieq], sum(A_ieq[i][j] * x[j] for j in 1:length(x)) >= b_ieq[i])
+    JuMP.@constraint(m_sp, gamma_ieq[i = 1:num_constr_ieq], sum(A_ieq[i][j] * x[j] for j in 1:length(x)) >= b_ieq[i])
   end
-  @objective(m_sp, Min, 0)
+  JuMP.@objective(m_sp, Min, 0)
   for cyc in cycle[string("cyc_", string(cyc_size))]
     b_eq = create_beq(params, cyc, cs_w)
     # println("cs_w: ", cs_w)
@@ -930,9 +930,9 @@ function sp_per_cyc(cyc_size, m_sp, params, cs_w)
       # println("cut LHS eq: ", sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq))
       # end
       if params["cycle_relax"] == "mc"
-        @constraint(m, sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq) + sum(gamma_ieq_bar[i] * cut_var_ieq[i] for i in 1 : num_constr_ieq) <= - params["sep_tol"])
+        JuMP.@constraint(m, sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq) + sum(gamma_ieq_bar[i] * cut_var_ieq[i] for i in 1 : num_constr_ieq) <= - params["sep_tol"])
       elseif params["cycle_relax"] == "epr"
-        @constraint(m, sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq) <= - params["sep_tol"])
+        JuMP.@constraint(m, sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq) <= - params["sep_tol"])
       end
       specs["num_cuts"] += 1
       if cs_w == "cs"

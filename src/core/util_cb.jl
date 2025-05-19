@@ -107,7 +107,7 @@ function cb_build_sp(cyc_size, m_sp, params, cs_w)
   A_eq = create_Aeq(params, cyc_size, x, cs_w) # conefficient matrix for equality constraints
   num_constr_eq = size(A_eq)[1]
   b_eq = zeros(num_constr_eq)
-  @constraint(m_sp, gamma_eq[i = 1:num_constr_eq], sum(A_eq[i][j] * x[j] for j in 1:length(x)) == b_eq[i])
+  JuMP.@constraint(m_sp, gamma_eq[i = 1:num_constr_eq], sum(A_eq[i][j] * x[j] for j in 1:length(x)) == b_eq[i])
 
   A_ieq = nothing
   b_ieq = nothing
@@ -116,9 +116,9 @@ function cb_build_sp(cyc_size, m_sp, params, cs_w)
     # A_ieq = create_Aieq(params, cyc_size, x, cs_w) # coefficient matrix for inequality constraints.
     # num_constr_ieq = size(A_ieq)[1]
     # b_ieq = zeros(num_constr_ieq)
-    # @constraint(m_sp, gamma_ieq[i = 1:num_constr_ieq], sum(A_ieq[i][j] * x[j] for j in 1:length(x)) >= b_ieq[i])
+    # JuMP.@constraint(m_sp, gamma_ieq[i = 1:num_constr_ieq], sum(A_ieq[i][j] * x[j] for j in 1:length(x)) >= b_ieq[i])
   end
-  @objective(m_sp, Min, 0)
+  JuMP.@objective(m_sp, Min, 0)
   return x
 end
 
@@ -187,7 +187,7 @@ function cb_sp_per_cyc(cyc_size, m_sp, x_dict, params, cs_w, cb_data)
       end
 
       if params["cycle_relax"] == "mc"
-        # @constraint(m, sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq) + sum(gamma_ieq_bar[i] * cut_var_ieq[i] for i in 1 : num_constr_ieq) <= - params["sep_tol"])
+        # JuMP.@constraint(m, sum(gamma_eq_bar[i] * cut_var_eq[i] for i in 1 : num_constr_eq) + sum(gamma_ieq_bar[i] * cut_var_ieq[i] for i in 1 : num_constr_ieq) <= - params["sep_tol"])
       elseif params["cycle_relax"] == "epr"
         cutvareq_lb, cutvareq_ub = cutvareq_bds(cyc, cs_w)
         M = cycle_big_M(gamma_eq_bar, cut_var_eq, cutvareq_lb, cutvareq_ub)

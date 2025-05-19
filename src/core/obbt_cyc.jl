@@ -60,7 +60,7 @@ function run_cyc_obbt_opf!(data::Dict{String,<:Any}, model;
     model = _build_model(data, model)
     # print(model)
     if upper_bound_constraint
-        @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]) <= upper_bound)
+        JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]) <= upper_bound)
     end
     # (upper_bound_constraint) && (_constraint_obj_bound(model_bt, upper_bound))
 
@@ -141,7 +141,7 @@ function run_cyc_obbt_opf!(data::Dict{String,<:Any}, model;
             start_time = time()
             # vm lower bound solve
             lb = NaN
-            @objective(model, Min, model[:vm][bus])
+            JuMP.@objective(model, Min, model[:vm][bus])
             JuMP.optimize!(model)
             if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                 nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -153,7 +153,7 @@ function run_cyc_obbt_opf!(data::Dict{String,<:Any}, model;
 
             #vm upper bound solve
             ub = NaN
-            @objective(model, Max, model[:vm][bus])
+            JuMP.@objective(model, Max, model[:vm][bus])
             JuMP.optimize!(model)
             if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                 nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -219,7 +219,7 @@ function run_cyc_obbt_opf!(data::Dict{String,<:Any}, model;
             start_time = time()
             # td lower bound solve
             lb = NaN
-            @objective(model, Min, model[:td][bp])
+            JuMP.@objective(model, Min, model[:td][bp])
             JuMP.optimize!(model)
             if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                 nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -233,7 +233,7 @@ function run_cyc_obbt_opf!(data::Dict{String,<:Any}, model;
 
             # td upper bound solve
             ub = NaN
-            @objective(model, Max, model[:td][bp])
+            JuMP.@objective(model, Max, model[:td][bp])
             JuMP.optimize!(model)
             if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                 nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -318,7 +318,7 @@ function run_cyc_obbt_opf!(data::Dict{String,<:Any}, model;
 
         # Rebuild the bound-tightening model
         if upper_bound_constraint
-            @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]) <= upper_bound)
+            JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]) <= upper_bound)
         end
 
         Memento.info(_LOGGER, "iteration $(current_iteration+1), vm range: $vm_range_final, td range: $td_range_final, relaxation obj: $final_relaxation_objective")
@@ -473,7 +473,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
     model = _build_ots_model(data, model, true, z_lb, z_ub, zc_lb, zc_ub)
     # print(model)
     if upper_bound_constraint
-        @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+        JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
     end
     # (upper_bound_constraint) && (_constraint_obj_bound(model_bt, upper_bound))
 
@@ -590,7 +590,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
                 start_time = time()
                 # vm lower bound solve
                 lb = NaN
-                @objective(model, Min, model[:vm][bus])
+                JuMP.@objective(model, Min, model[:vm][bus])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -603,7 +603,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
 
                 #vm upper bound solve
                 ub = NaN
-                @objective(model, Max, model[:vm][bus])
+                JuMP.@objective(model, Max, model[:vm][bus])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -670,8 +670,8 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
                 (td_ub[bp] - td_lb[bp] < min_bound_width) && (continue)
 
                 # leaf_gens(ref)
-                # @objective(model, Min, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
-                # @objective(model, Min, 0)
+                # JuMP.@objective(model, Min, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
+                # JuMP.@objective(model, Min, 0)
                 # Write_model(model, "results/model_debug.txt")#@
                 # JuMP.optimize!(model)
                 # println("termination status for debug: ", termination_status(model))
@@ -681,9 +681,9 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
                 lb = NaN
                 # ub = NaN
                 if params["ext_cons"]
-                    @objective(model, Min, model[:td][bp])
+                    JuMP.@objective(model, Min, model[:td][bp])
                 else
-                    @objective(model, Min, model[:va][bp[1]] - model[:va][bp[2]])
+                    JuMP.@objective(model, Min, model[:va][bp[1]] - model[:va][bp[2]])
                 end
                 # Write_model(model, "results/model_lb.txt")#@
                 JuMP.optimize!(model)
@@ -702,9 +702,9 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
                 # td upper bound solve
                 ub = NaN
                 if params["ext_cons"]
-                    @objective(model, Max, model[:td][bp])
+                    JuMP.@objective(model, Max, model[:td][bp])
                 else
-                    @objective(model, Max, model[:va][bp[1]] - model[:va][bp[2]])
+                    JuMP.@objective(model, Max, model[:va][bp[1]] - model[:va][bp[2]])
                 end
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
@@ -782,7 +782,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
                 start_time = time()
                 # z lower bound solve
                 lb = NaN
-                @objective(model, Min, model[:z][bp])
+                JuMP.@objective(model, Min, model[:z][bp])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     # nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -797,7 +797,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
 
                 # z upper bound solve
                 ub = NaN
-                @objective(model, Max, model[:z][bp])
+                JuMP.@objective(model, Max, model[:z][bp])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     # nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -833,7 +833,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
                 start_time = time()
                 # z lower bound solve
                 lb = NaN
-                @objective(model, Min, model[:zc][cyc])
+                JuMP.@objective(model, Min, model[:zc][cyc])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     # nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -848,7 +848,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
 
                 # z upper bound solve
                 ub = NaN
-                @objective(model, Max, model[:zc][cyc])
+                JuMP.@objective(model, Max, model[:zc][cyc])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     # nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -897,7 +897,7 @@ function run_cyc_obbt_ots!(data::Dict{String,<:Any}, model;
 
         # Rebuild the bound-tightening model
         if upper_bound_constraint
-            @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+            JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
         end
 
         Memento.info(_LOGGER, "iteration $(current_iteration+1), vm range: $vm_range_final, td range: $td_range_final, relaxation obj: $final_relaxation_objective")
@@ -1059,7 +1059,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
     model = _build_ots_model(data, model, true, z_lb, z_ub, zc_lb, zc_ub)
     # print(model)
     if upper_bound_constraint
-        @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+        JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
     end
     # (upper_bound_constraint) && (_constraint_obj_bound(model_bt, upper_bound))
 
@@ -1179,7 +1179,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
                 start_time = time()
                 # vm lower bound solve
                 lb = NaN
-                @objective(model, Min, model[:vm][bus])
+                JuMP.@objective(model, Min, model[:vm][bus])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -1192,7 +1192,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 #vm upper bound solve
                 ub = NaN
-                @objective(model, Max, model[:vm][bus])
+                JuMP.@objective(model, Max, model[:vm][bus])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -1257,7 +1257,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 # Rebuild the bound-tightening model
                 if upper_bound_constraint
-                    @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+                    JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
                 end
 
             end
@@ -1272,8 +1272,8 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
                 (td_ub[bp] - td_lb[bp] < min_bound_width) && (continue)
 
                 # leaf_gens(ref)
-                # @objective(model, Min, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
-                # @objective(model, Min, 0)
+                # JuMP.@objective(model, Min, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
+                # JuMP.@objective(model, Min, 0)
                 # Write_model(model, "results/model_debug.txt")#@
                 # JuMP.optimize!(model)
                 # println("termination status for debug: ", termination_status(model))
@@ -1283,9 +1283,9 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
                 lb = NaN
                 # ub = NaN
                 if params["ext_cons"]
-                    @objective(model, Min, model[:td][bp])
+                    JuMP.@objective(model, Min, model[:td][bp])
                 else
-                    @objective(model, Min, model[:va][bp[1]] - model[:va][bp[2]])
+                    JuMP.@objective(model, Min, model[:va][bp[1]] - model[:va][bp[2]])
                 end
                 # Write_model(model, "results/model_lb.txt")#@
                 JuMP.optimize!(model)
@@ -1304,9 +1304,9 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
                 # td upper bound solve
                 ub = NaN
                 if params["ext_cons"]
-                    @objective(model, Max, model[:td][bp])
+                    JuMP.@objective(model, Max, model[:td][bp])
                 else
-                    @objective(model, Max, model[:va][bp[1]] - model[:va][bp[2]])
+                    JuMP.@objective(model, Max, model[:va][bp[1]] - model[:va][bp[2]])
                 end
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
@@ -1379,7 +1379,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 # Rebuild the bound-tightening model
                 if upper_bound_constraint
-                    @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+                    JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
                 end
             end
             avg_td_reduction = total_td_reduction/length(buspairs)
@@ -1394,7 +1394,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
                 start_time = time()
                 # z lower bound solve
                 lb = NaN
-                @objective(model, Min, model[:z][bp])
+                JuMP.@objective(model, Min, model[:z][bp])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -1408,7 +1408,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 # z upper bound solve
                 ub = NaN
-                @objective(model, Max, model[:z][bp])
+                JuMP.@objective(model, Max, model[:z][bp])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -1475,7 +1475,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 # Rebuild the bound-tightening model
                 if upper_bound_constraint
-                    @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+                    JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
                 end
             end
             avg_z_reduction = total_z_reduction/length(buspairs)
@@ -1490,7 +1490,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
                 start_time = time()
                 # z lower bound solve
                 lb = NaN
-                @objective(model, Min, model[:zc][cyc])
+                JuMP.@objective(model, Min, model[:zc][cyc])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nlb = floor(10.0^precision * objective_value(model))/(10.0^precision)
@@ -1504,7 +1504,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 # z upper bound solve
                 ub = NaN
-                @objective(model, Max, model[:zc][cyc])
+                JuMP.@objective(model, Max, model[:zc][cyc])
                 JuMP.optimize!(model)
                 if (termination_status(model) == MOI.LOCALLY_SOLVED || termination_status(model) == MOI.OPTIMAL)
                     nub = ceil(10.0^precision * objective_value(model))/(10.0^precision)
@@ -1571,7 +1571,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
                 # Rebuild the bound-tightening model
                 if upper_bound_constraint
-                    @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+                    JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
                 end
             end
             avg_zc_reduction = total_zc_reduction/length(buspairs)
@@ -1600,7 +1600,7 @@ function run_cyc_obbt_ots_perRound!(data::Dict{String,<:Any}, model;
 
         # Rebuild the bound-tightening model
         if upper_bound_constraint
-            @constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
+            JuMP.@constraint(model, ub_con, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * model[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]) <= upper_bound)
         end
 
         Memento.info(_LOGGER, "iteration $(current_iteration+1), vm range: $vm_range_final, td range: $td_range_final, relaxation obj: $final_relaxation_objective")
@@ -1696,7 +1696,7 @@ end
 #     #
 #     # from_idx = Dict(arc[1] => arc for arc in ref(pm, :arcs_from_dc))
 #
-#     JuMP.@constraint(model, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]) <= bound)
+#     JuMP.JuMP.@constraint(model, sum(gen["cost"][1] * model[:pg][i]^2  + gen["cost"][2] * model[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]) <= bound)
 # end
 
 function _create_modifications(data,
@@ -1745,7 +1745,7 @@ function _build_model(data, _m)
    #---------------;
    #  Objective    ;
    #---------------;
-   @objective(_m, Min, sum(gen["cost"][1]* _m[:pg][i]^2  + gen["cost"][2]*_m[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]))
+   JuMP.@objective(_m, Min, sum(gen["cost"][1]* _m[:pg][i]^2  + gen["cost"][2]*_m[:pg][i] + gen["cost"][3] for (i,gen) in ref[:gen]))
 
    #---------------;
    # Constraints   ;
@@ -1818,7 +1818,7 @@ function _build_ots_model(data, _m, relax, z_lb, z_ub, zc_lb, zc_ub)
    #  Objective    ;
    #---------------;
    leaf_gens(ref)
-   @objective(_m, Min, sum(gen["cost"][1]*_m[:pg][i]^2  + gen["cost"][2]*_m[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * _m[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
+   JuMP.@objective(_m, Min, sum(gen["cost"][1]*_m[:pg][i]^2  + gen["cost"][2]*_m[:pg][i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * _m[:z][bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
 
    #---------------;
    # Constraints   ;

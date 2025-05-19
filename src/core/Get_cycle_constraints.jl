@@ -63,7 +63,7 @@ function create_cyc_constr(_m, ref, params)
                 end
             end
             if params["cycle_sw_cuts"]
-                # @constraint(_m, )
+                # JuMP.@constraint(_m, )
             end
         end
         if params["cycle_max_bnd"] >= 4
@@ -190,9 +190,9 @@ function create_cyc_constr(_m, ref, params)
                 [cyc in cycle["cyc_3"]], _m[:x_w][cyc, (7,5)] == _m[:x_w][cyc, (1,6)] - _m[:x_w][cyc, (3,4)]
                 end)
                 if params["model"] == "opf"
-                    @constraint(_m, [cyc in cycle["cyc_3"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^9)) == 1)
+                    JuMP.@constraint(_m, [cyc in cycle["cyc_3"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^9)) == 1)
                 elseif params["model"] == "ots" || params["model"] == "ots_relax"
-                    @constraint(_m, [cyc in cycle["cyc_3"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^9)) == _m[:zc][Tuple(cyc)])
+                    JuMP.@constraint(_m, [cyc in cycle["cyc_3"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^9)) == _m[:zc][Tuple(cyc)])
                 end
                 for cyc in cycle["cyc_3"]
                     buspairs = [(cyc[1], cyc[2]), (cyc[2], cyc[3]), (cyc[1], cyc[3])]
@@ -227,9 +227,9 @@ function create_cyc_constr(_m, ref, params)
                     [cyc in cycle["cyc_4"]], _m[:x_c][cyc, (2,7)] + _m[:x_c][cyc, (3,6)] == -_m[:x_c][cyc, (4,5)] + _m[:x_c][cyc, (1,8)]
                 end)
                 if params["model"] == "opf"
-                    @constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_c][cyc, i] for i in 1:(2^8)) == 1)
+                    JuMP.@constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_c][cyc, i] for i in 1:(2^8)) == 1)
                 elseif params["model"] == "ots" || params["model"] == "ots_relax"
-                    @constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_c][cyc, i] for i in 1:(2^8)) == _m[:zc][Tuple(cyc)])
+                    JuMP.@constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_c][cyc, i] for i in 1:(2^8)) == _m[:zc][Tuple(cyc)])
                 end
                 for cyc in cycle["cyc_4"]
                     buspairs = [(cyc[1], cyc[2]), (cyc[2], cyc[3]), (cyc[3], cyc[4]), (cyc[1], cyc[4])]
@@ -258,15 +258,15 @@ function create_cyc_constr(_m, ref, params)
                         [cyc in cycle["cyc_4"]], _m[:x_w][cyc, (2,7,9)] + _m[:x_w][cyc, (3,6,9)] == -_m[:x_w][cyc, (4,5,11)] + _m[:x_w][cyc, (1,8,11)]
                     end)
                     if params["model"] == "opf"
-                        @constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^12)) == 1)
+                        JuMP.@constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^12)) == 1)
                     elseif params["model"] == "ots" || params["model"] == "ots_relax"
-                        @constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^12)) == _m[:zc][Tuple(cyc)])
+                        JuMP.@constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^12)) == _m[:zc][Tuple(cyc)])
                     end
                 else
                     if params["model"] == "opf"
-                        @constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^8)) == 1)
+                        JuMP.@constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^8)) == 1)
                     elseif params["model"] == "ots" || params["model"] == "ots_relax"
-                        @constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^8)) == _m[:zc][Tuple(cyc)])
+                        JuMP.@constraint(_m, [cyc in cycle["cyc_4"]], sum(_m[:λ_w][cyc, i] for i in 1:(2^8)) == _m[:zc][Tuple(cyc)])
                     end
                 end
                 for cyc in cycle["cyc_4"]
@@ -321,8 +321,8 @@ function create_cyc_constr(_m, ref, params)
                 #     # push!(arcpairs2, (cyc[2], cyc[3], cyc[1], cyc[3]))
                 #     # push!(arcpairs2, (cyc[1], cyc[2], cyc[1], cyc[3]))
                 # end
-                # @variable(_m, hcc[ap in arcpairs2])
-                # @variable(_m, hss[ap in arcpairs])
+                # JuMP.@variable(_m, hcc[ap in arcpairs2])
+                # JuMP.@variable(_m, hss[ap in arcpairs])
                 # @constraints(_m, begin
                 #     [cyc in cycle["cyc_3"], ap in arcpairs2], _m[:hcc][(ap[1], ap[2], ap[3], ap[4])] == _m[:cs][(ap[1], ap[2])] * _m[:cs][(ap[3], ap[4])]
                 #     [cyc in cycle["cyc_3"], ap in arcpairs], _m[:hss][(ap[1], ap[2], ap[3], ap[4])] == _m[:si][(ap[1], ap[2])] * _m[:si][(ap[3], ap[4])]
@@ -379,9 +379,9 @@ function create_cyc_constr(_m, ref, params)
                     # push!(arcpairs2, (cyc[2], cyc[3], cyc[1], cyc[3]))
                     # push!(arcpairs2, (cyc[1], cyc[2], cyc[1], cyc[3]))
                 end
-                @variable(_m, wwr[ap in arcpairs2])
-                @variable(_m, wwi[ap in arcpairs])
-                @variable(_m, ww[ap in arcpairs3])
+                JuMP.@variable(_m, wwr[ap in arcpairs2])
+                JuMP.@variable(_m, wwi[ap in arcpairs])
+                JuMP.@variable(_m, ww[ap in arcpairs3])
                 @constraints(_m, begin
                     [cyc in cycle["cyc_3"], ap in arcpairs2], _m[:wwr][(ap[1], ap[2], ap[3], ap[4])] == _m[:wr][(ap[1], ap[2])] * _m[:wr][(ap[3], ap[4])]
                     [cyc in cycle["cyc_3"], ap in arcpairs], _m[:wwi][(ap[1], ap[2], ap[3], ap[4])] == _m[:wi][(ap[1], ap[2])] * _m[:wi][(ap[3], ap[4])]

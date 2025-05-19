@@ -63,11 +63,11 @@ if params["formulate_problem"]
   #  Objective    ;
   #---------------;
   if params["model"] == "opf"
-     @objective(m, Min, sum(gen["cost"][1]*pg[i]^2  + gen["cost"][2]*pg[i] + gen["cost"][3] for (i,gen) in ref[:gen]))
+     JuMP.@objective(m, Min, sum(gen["cost"][1]*pg[i]^2  + gen["cost"][2]*pg[i] + gen["cost"][3] for (i,gen) in ref[:gen]))
   elseif params["model"] == "ots" || params["model"] == "ots_relax"
-     # @objective(m, Min, sum(gen["cost"][1]*pg[i]^2  + gen["cost"][2]*pg[i] + gen["cost"][3] for (i,gen) in ref[:gen]))
+     # JuMP.@objective(m, Min, sum(gen["cost"][1]*pg[i]^2  + gen["cost"][2]*pg[i] + gen["cost"][3] for (i,gen) in ref[:gen]))
      leaf_gens(ref)
-     @objective(m, Min, sum(gen["cost"][1]*pg[i]^2  + gen["cost"][2]*pg[i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * z[bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
+     JuMP.@objective(m, Min, sum(gen["cost"][1]*pg[i]^2  + gen["cost"][2]*pg[i] for (i,gen) in ref[:gen]) + sum(ref[:gen][g]["cost"][3] * z[bp] for (g, bp) in ref[:gens_on_leaf]) + sum(ref[:gen][g]["cost"][3] for g in ref[:gens_not_on_leaf]))
   end
 
   #---------------;
@@ -151,7 +151,7 @@ if params["formulate_problem"]
      if params["get_root_relax"]
          println("Root relaxation for $(params["model"]): ", objective_bound(m))
      elseif primal_status(m) != NO_SOLUTION
-         println("QC-$(params["model"]) objective: ", objective_value(m))
+         println("QC-$(params["model"]) objective: ", JuMP.objective_value(m))
      else
         println("No feasible solution found.")
      end
@@ -162,7 +162,7 @@ if params["formulate_problem"]
   if params["get_root_relax"]
       append!(obj_value, objective_bound(m))
   elseif primal_status(m) != NO_SOLUTION
-      append!(obj_value, objective_value(m))
+      append!(obj_value, JuMP.objective_value(m))
   else
      push!(obj_value, "NaN")
   end

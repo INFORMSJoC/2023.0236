@@ -554,26 +554,26 @@ function mcc_ots_wij(m, bp)
 
    function bds_on_off(x, xz, lb, ub)
       # Hijazi et. al. do not have the following two constraints.
-      @constraint(m, x - (1 - m[:z][bp]) * ub <= xz)
-      @constraint(m, xz <= x - (1 - m[:z][bp]) * lb)
+      JuMP.@constraint(m, x - (1 - m[:z][bp]) * ub <= xz)
+      JuMP.@constraint(m, xz <= x - (1 - m[:z][bp]) * lb)
       if params["ext_cons"]
-         @constraint(m, lb * m[:z][bp] <= xz)
-         @constraint(m, xz <= ub * m[:z][bp])
+         JuMP.@constraint(m, lb * m[:z][bp] <= xz)
+         JuMP.@constraint(m, xz <= ub * m[:z][bp])
       end
    end
 
    function mcc_on_off(xy, xz, yz, xlb, xub, ylb, yub)
-      @constraint(m, xy >= xlb * yz + ylb * xz - xlb * ylb * m[:z][bp])
-      @constraint(m, xy >= xub * yz + yub * xz - xub * yub * m[:z][bp])
-      @constraint(m, xy <= xlb * yz + yub * xz - xlb * yub * m[:z][bp])
-      @constraint(m, xy <= xub * yz + ylb * xz - xub * ylb * m[:z][bp])
+      JuMP.@constraint(m, xy >= xlb * yz + ylb * xz - xlb * ylb * m[:z][bp])
+      JuMP.@constraint(m, xy >= xub * yz + yub * xz - xub * yub * m[:z][bp])
+      JuMP.@constraint(m, xy <= xlb * yz + yub * xz - xlb * yub * m[:z][bp])
+      JuMP.@constraint(m, xy <= xub * yz + ylb * xz - xub * ylb * m[:z][bp])
    end
 
    bds_on_off(m[:vm][i], m[:vmz][bp], lb["vmz"][i], ub["vmz"][i])
    bds_on_off(m[:vm][j], m[:vmz][(j, i)], lb["vmz"][j], ub["vmz"][j])
 
-   @constraint(m, m[:vv][bp] <= ub["vmz"][i] * ub["vmz"][j] * m[:z][bp])
-   @constraint(m, lb["vmz"][i] * lb["vmz"][j] * m[:z][bp] <= m[:vv][bp])
+   JuMP.@constraint(m, m[:vv][bp] <= ub["vmz"][i] * ub["vmz"][j] * m[:z][bp])
+   JuMP.@constraint(m, lb["vmz"][i] * lb["vmz"][j] * m[:z][bp] <= m[:vv][bp])
 
    mcc_on_off(m[:vv][bp], m[:vmz][bp], m[:vmz][(j,i)], lb["vmz"][i], ub["vmz"][i], lb["vmz"][j], ub["vmz"][j])
 

@@ -4,16 +4,16 @@ function create_constraints(_m, ref, params, bd_data)
         quadratic_relax(_m, _m[:w][i], _m[:vm][i])
     end
 
-    # @constraint(_m, _m[:z][(1,2)] == 0)
-    # @constraint(_m, _m[:zc][(1,2,3)] == 0)
+    # JuMP.@constraint(_m, _m[:z][(1,2)] == 0)
+    # JuMP.@constraint(_m, _m[:zc][(1,2,3)] == 0)
 
     if params["model"] == "ots" || params["model"] == "ots_relax"
         if params["ots_card_lb"] >= 0.5
-            @constraint(_m, sum((1 - _m[:z][bp]) for bp in keys(ref[:buspairs])) >= params["ots_card_lb"])
+            JuMP.@constraint(_m, sum((1 - _m[:z][bp]) for bp in keys(ref[:buspairs])) >= params["ots_card_lb"])
             # println("card constr: ", @build_constraint(sum((1 - _m[:z][bp]) for bp in keys(ref[:buspairs])) >= params["ots_card_lb"]))
         end
         if params["ots_card_ub"] != Inf
-            @constraint(_m, sum((1 - _m[:z][bp]) for bp in keys(ref[:buspairs])) <= params["ots_card_ub"])
+            JuMP.@constraint(_m, sum((1 - _m[:z][bp]) for bp in keys(ref[:buspairs])) <= params["ots_card_ub"])
         end
     end
 
@@ -30,14 +30,14 @@ function create_constraints(_m, ref, params, bd_data)
 
        # Phase-angle diff constraint
        if params["ext_cons"]
-           @constraint(_m, _m[:va][i] - _m[:va][j] == _m[:td][bp])
+           JuMP.@constraint(_m, _m[:va][i] - _m[:va][j] == _m[:td][bp])
        end
 
         # if params["model"] == "opf"
-        #     @constraint(_m, _m[:va][i] - _m[:va][j] == _m[:td][bp])
+        #     JuMP.@constraint(_m, _m[:va][i] - _m[:va][j] == _m[:td][bp])
         # elseif params["model"] == "ots" || params["model"] == "ots_relax"
-        #     @constraint(_m, _m[:va][i] - _m[:va][j] - 2 * td_M * (1 - _m[:z][bp]) <= _m[:td][bp])
-        #     @constraint(_m, _m[:td][bp] <= _m[:va][i] - _m[:va][j] + 2 * td_M * (1 - _m[:z][bp]))
+        #     JuMP.@constraint(_m, _m[:va][i] - _m[:va][j] - 2 * td_M * (1 - _m[:z][bp]) <= _m[:td][bp])
+        #     JuMP.@constraint(_m, _m[:td][bp] <= _m[:va][i] - _m[:va][j] + 2 * td_M * (1 - _m[:z][bp]))
         # end
 
        # Cosine and sine relaxations.
@@ -47,7 +47,7 @@ function create_constraints(_m, ref, params, bd_data)
             relaxation_sin(_m, _m[:si][bp], _m[:td][bp], td_min, td_max, td_u)
 
             if params["ext_cons"] == false
-                @constraint(_m, _m[:va][i] - _m[:va][j] == _m[:td][bp])
+                JuMP.@constraint(_m, _m[:va][i] - _m[:va][j] == _m[:td][bp])
             end
         elseif params["model"] == "ots" || params["model"] == "ots_relax"
             relaxation_cos_on_off(_m, bp, td_min, td_max, td_u, td_M, cos_min, cos_max)
@@ -55,30 +55,30 @@ function create_constraints(_m, ref, params, bd_data)
             relaxation_sin_on_off(_m, bp, td_min, td_max, td_u, td_M, sin_min, sin_max)
 
             if params["ext_cons"]
-                @constraint(_m, _m[:td][bp] <= td_max * _m[:z][bp] + td_M * (1 - _m[:z][bp]))
-                @constraint(_m, _m[:td][bp] >= td_min * _m[:z][bp] - td_M * (1 - _m[:z][bp]))
+                JuMP.@constraint(_m, _m[:td][bp] <= td_max * _m[:z][bp] + td_M * (1 - _m[:z][bp]))
+                JuMP.@constraint(_m, _m[:td][bp] >= td_min * _m[:z][bp] - td_M * (1 - _m[:z][bp]))
             else
                 # p.27 Hijazi:
-                @constraint(_m, _m[:va][i] - _m[:va][j] <= td_max * _m[:z][bp] + (1 - _m[:z][bp]) * td_M)
-                @constraint(_m, td_min * _m[:z][bp] - td_M * (1 - _m[:z][bp]) <= _m[:va][i] - _m[:va][j])
+                JuMP.@constraint(_m, _m[:va][i] - _m[:va][j] <= td_max * _m[:z][bp] + (1 - _m[:z][bp]) * td_M)
+                JuMP.@constraint(_m, td_min * _m[:z][bp] - td_M * (1 - _m[:z][bp]) <= _m[:va][i] - _m[:va][j])
             end
 
-            @constraint(_m, _m[:wr][bp] <= bd_data["wr_max"][bp] * _m[:z][bp])
-            @constraint(_m, _m[:wr][bp] >= bd_data["wr_min"][bp] * _m[:z][bp])
-            @constraint(_m, _m[:wi][bp] <= bd_data["wi_max"][bp] * _m[:z][bp])
-            @constraint(_m, _m[:wi][bp] >= bd_data["wi_min"][bp] * _m[:z][bp])
+            JuMP.@constraint(_m, _m[:wr][bp] <= bd_data["wr_max"][bp] * _m[:z][bp])
+            JuMP.@constraint(_m, _m[:wr][bp] >= bd_data["wr_min"][bp] * _m[:z][bp])
+            JuMP.@constraint(_m, _m[:wi][bp] <= bd_data["wi_max"][bp] * _m[:z][bp])
+            JuMP.@constraint(_m, _m[:wi][bp] >= bd_data["wi_min"][bp] * _m[:z][bp])
 
-            # @constraint(_m, _m[:cs][bp] <= bd_data["cos_max"][bp] * _m[:z][bp])
-            # @constraint(_m, _m[:cs][bp] >= bd_data["cos_min"][bp] * _m[:z][bp])
-            # @constraint(_m, _m[:si][bp] <= bd_data["sin_max"][bp] * _m[:z][bp])
-            # @constraint(_m, _m[:si][bp] >= bd_data["sin_min"][bp] * _m[:z][bp])
+            # JuMP.@constraint(_m, _m[:cs][bp] <= bd_data["cos_max"][bp] * _m[:z][bp])
+            # JuMP.@constraint(_m, _m[:cs][bp] >= bd_data["cos_min"][bp] * _m[:z][bp])
+            # JuMP.@constraint(_m, _m[:si][bp] <= bd_data["sin_max"][bp] * _m[:z][bp])
+            # JuMP.@constraint(_m, _m[:si][bp] >= bd_data["sin_min"][bp] * _m[:z][bp])
         end
 
         if params["circ_cons"]
             if params["model"] == "opf"
-                @constraint(_m, _m[:cs][bp]^2 + _m[:si][bp]^2 <= 1)
+                JuMP.@constraint(_m, _m[:cs][bp]^2 + _m[:si][bp]^2 <= 1)
             elseif params["model"] == "ots" || params["model"] == "ots_relax"
-                @constraint(_m, _m[:cs][bp]^2 + _m[:si][bp]^2 <= _m[:z][bp])
+                JuMP.@constraint(_m, _m[:cs][bp]^2 + _m[:si][bp]^2 <= _m[:z][bp])
             end
         end
 
@@ -91,7 +91,7 @@ function create_constraints(_m, ref, params, bd_data)
             elseif params["model"] == "ots" || params["model"] == "ots_relax"
                 x3_y3_bd = [[bd_data["cos_min"][bp], bd_data["cos_max"][bp]], [bd_data["sin_min"][bp], bd_data["sin_max"][bp]]]
                 conv_tri_sum_on_off(_m, _m[:wr][bp], _m[:wi][bp], _m[:vm][i], _m[:vm][j], _m[:cs][bp], _m[:si][bp], _m[:λ_wr][bp,:], _m[:λ_wi][bp,:], _m[:z][bp], x3_y3_bd)
-                # @constraint(_m, [l in 1:2], sum(_m[:λ_hat][bp, l, k] for k = 1:2) == 1 - z[bp])
+                # JuMP.@constraint(_m, [l in 1:2], sum(_m[:λ_hat][bp, l, k] for k = 1:2) == 1 - z[bp])
             end
             if params["rlt_cuts"]
                 conv_tri_sum_rlt_1(_m, _m[:wr][bp], _m[:wi][bp], _m[:vm][i], _m[:vm][j], _m[:cs][bp], _m[:si][bp], _m[:λ_wr][bp,:], _m[:λ_wi][bp,:], _m[:vc_i][bp], _m[:vc_j][bp], _m[:vs_i][bp], _m[:vs_j][bp], _m[:c_λ_wr][bp,:], _m[:s_λ_wi][bp,:])
@@ -146,26 +146,26 @@ function create_constraints(_m, ref, params, bd_data)
             w_to = _m[:w][branch["t_bus"]]
 
           # R-SOC constraint. Constraint (7d, opf)/(10d, ots)
-            @constraint(_m, p_fr^2 + q_fr^2 <= w_fr / tm^2 * _m[:cm][bp])
+            JuMP.@constraint(_m, p_fr^2 + q_fr^2 <= w_fr / tm^2 * _m[:cm][bp])
             if params["extra_rlt"]
-                @constraint(_m, p_to^2 + q_to^2 <= w_to * _m[:cm][(bp[2], bp[1])])
+                JuMP.@constraint(_m, p_to^2 + q_to^2 <= w_to * _m[:cm][(bp[2], bp[1])])
             end
             if params["model"] == "ots" || params["model"] == "ots_relax"
                 cm_ub_br = bd_data["cm_ub"][(branch["f_bus"], branch["t_bus"])]
-                # @constraint(_m, p_fr^2 + q_fr^2 <= ref[:bus][branch["f_bus"]]["vmax"]^2 / tm^2 * _m[:cm][bp] * _m[:z][bp])
-                # @constraint(_m, p_fr^2 + q_fr^2 <= cm_ub_br / tm^2 * w_fr * _m[:z][bp])
+                # JuMP.@constraint(_m, p_fr^2 + q_fr^2 <= ref[:bus][branch["f_bus"]]["vmax"]^2 / tm^2 * _m[:cm][bp] * _m[:z][bp])
+                # JuMP.@constraint(_m, p_fr^2 + q_fr^2 <= cm_ub_br / tm^2 * w_fr * _m[:z][bp])
                 # Bounds for cm, constraint (t)
                 if params["ext_cons"]
-                    @constraint(_m, _m[:cm][bp] <= cm_ub_br * _m[:z][bp])
+                    JuMP.@constraint(_m, _m[:cm][bp] <= cm_ub_br * _m[:z][bp])
                 else
-                    @constraint(_m, _m[:cm][bp] <= cm_ub_br)
+                    JuMP.@constraint(_m, _m[:cm][bp] <= cm_ub_br)
                 end
                 if params["extra_rlt"]
                     cm_ub_br = bd_data["cm_ub"][(branch["t_bus"], branch["f_bus"])]
                     if params["ext_cons"]
-                        @constraint(_m, _m[:cm][(bp[2], bp[1])] <= cm_ub_br * _m[:z][bp])
+                        JuMP.@constraint(_m, _m[:cm][(bp[2], bp[1])] <= cm_ub_br * _m[:z][bp])
                     else
-                        @constraint(_m, _m[:cm][(bp[2], bp[1])] <= cm_ub_br)
+                        JuMP.@constraint(_m, _m[:cm][(bp[2], bp[1])] <= cm_ub_br)
                     end
                 end
             end
@@ -174,28 +174,28 @@ function create_constraints(_m, ref, params, bd_data)
 
             # constraint (7e) for opf/(n) for ots
             if params["model"] == "opf"
-                @constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (w_fr / tm^2 + w_to - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) - ym_sh_sqr * (w_fr / tm^2) + 2 * (g_fr * p_fr - b_fr * q_fr))
+                JuMP.@constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (w_fr / tm^2 + w_to - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) - ym_sh_sqr * (w_fr / tm^2) + 2 * (g_fr * p_fr - b_fr * q_fr))
                 if params["extra_rlt"]
-                    @constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (w_fr / tm^2 + w_to - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * (w_fr / tm^2) + 2 * (g * g_fr + b * b_fr) * w_fr / tm^2 - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) - (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
+                    JuMP.@constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (w_fr / tm^2 + w_to - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * (w_fr / tm^2) + 2 * (g * g_fr + b * b_fr) * w_fr / tm^2 - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) - (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
 
-                    @constraint(_m, _m[:cm][(bp[2], bp[1])] == (g^2 + b^2) * (w_fr / tm^2 + w_to - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * w_to + 2 * (g * g_fr + b * b_fr) * w_to - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) + (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
+                    JuMP.@constraint(_m, _m[:cm][(bp[2], bp[1])] == (g^2 + b^2) * (w_fr / tm^2 + w_to - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * w_to + 2 * (g * g_fr + b * b_fr) * w_to - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) + (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
                 end
             elseif params["model"] == "ots" || params["model"] == "ots_relax"
                 # if params["ext_cons"]
-                @constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (_m[:wz][bp] / tm^2 + _m[:wz][(bp[2], bp[1])] - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) - ym_sh_sqr * (_m[:wz][bp] / tm^2) + 2 * (g_fr * p_fr - b_fr * q_fr))
+                JuMP.@constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (_m[:wz][bp] / tm^2 + _m[:wz][(bp[2], bp[1])] - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) - ym_sh_sqr * (_m[:wz][bp] / tm^2) + 2 * (g_fr * p_fr - b_fr * q_fr))
                 # else
-                #     @constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (_m[:wz][bp] + _m[:wz][(bp[2], bp[1])] - 2 * _m[:wr][bp]))
+                #     JuMP.@constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (_m[:wz][bp] + _m[:wz][(bp[2], bp[1])] - 2 * _m[:wr][bp]))
                 # end
                 if params["extra_rlt"]
-                    @constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (_m[:wz][bp] / tm^2 + _m[:wz][(bp[2], bp[1])] - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * (_m[:wz][bp] / tm^2) + 2 * (g * g_fr + b * b_fr) * _m[:wz][bp] / tm^2 - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) - (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
+                    JuMP.@constraint(_m, _m[:cm][bp] == (g^2 + b^2) * (_m[:wz][bp] / tm^2 + _m[:wz][(bp[2], bp[1])] - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * (_m[:wz][bp] / tm^2) + 2 * (g * g_fr + b * b_fr) * _m[:wz][bp] / tm^2 - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) - (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
 
-                    @constraint(_m, _m[:cm][(bp[2], bp[1])] == (g^2 + b^2) * (_m[:wz][bp] / tm^2 + _m[:wz][(bp[2], bp[1])] - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * _m[:wz][(bp[2], bp[1])] + 2 * (g * g_fr + b * b_fr) * _m[:wz][(bp[2], bp[1])] - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) + (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
+                    JuMP.@constraint(_m, _m[:cm][(bp[2], bp[1])] == (g^2 + b^2) * (_m[:wz][bp] / tm^2 + _m[:wz][(bp[2], bp[1])] - 2 * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) / tm^2) + ym_sh_sqr * _m[:wz][(bp[2], bp[1])] + 2 * (g * g_fr + b * b_fr) * _m[:wz][(bp[2], bp[1])] - 2 * ((g * g_fr + b * b_fr) * (tr * _m[:wr][bp] + ti * _m[:wi][bp]) + (- b * g_fr + g * b_fr) * (- ti * _m[:wr][bp] + tr * _m[:wi][bp])) / tm^2)
                 end
                 # Bounds for p and q, constraints (r) & (s) -> Possibly redundant. Removed.
-                # @constraint(_m, p_fr <= branch["rate_a"] * _m[:z][bp])
-                # @constraint(_m, q_fr <= branch["rate_a"] * _m[:z][bp])
-                # @constraint(_m, p_fr >= - branch["rate_a"] * _m[:z][bp])
-                # @constraint(_m, q_fr >= - branch["rate_a"] * _m[:z][bp])
+                # JuMP.@constraint(_m, p_fr <= branch["rate_a"] * _m[:z][bp])
+                # JuMP.@constraint(_m, q_fr <= branch["rate_a"] * _m[:z][bp])
+                # JuMP.@constraint(_m, p_fr >= - branch["rate_a"] * _m[:z][bp])
+                # JuMP.@constraint(_m, q_fr >= - branch["rate_a"] * _m[:z][bp])
             end
         end
         
@@ -203,7 +203,7 @@ function create_constraints(_m, ref, params, bd_data)
 
     # Reference bus - theta constraint
     for i in keys(ref[:ref_buses])
-        @constraint(_m, _m[:va][i] == 0)
+        JuMP.@constraint(_m, _m[:va][i] == 0)
     end
 
     # Kirchoffs current law constraints
@@ -217,8 +217,8 @@ function create_constraints(_m, ref, params, bd_data)
             bs = ref[:shunt][shunt_num]["bs"]
         end
         # ots (2b)
-        @constraint(_m, sum(_m[:p][a] for a in ref[:bus_arcs][i])  == sum(_m[:pg][g] for g in ref[:bus_gens][i]) - sum(load["pd"] * params["load_multiplier"] for (l, load) in ref[:load] if load["load_bus"] == i)  - gs * _m[:w][i])
-        @constraint(_m, sum(_m[:q][a] for a in ref[:bus_arcs][i]) == sum(_m[:qg][g] for g in ref[:bus_gens][i]) - sum(load["qd"] * params["load_multiplier"] for (l, load) in ref[:load] if load["load_bus"] == i) + bs * _m[:w][i])
+        JuMP.@constraint(_m, sum(_m[:p][a] for a in ref[:bus_arcs][i])  == sum(_m[:pg][g] for g in ref[:bus_gens][i]) - sum(load["pd"] * params["load_multiplier"] for (l, load) in ref[:load] if load["load_bus"] == i)  - gs * _m[:w][i])
+        JuMP.@constraint(_m, sum(_m[:q][a] for a in ref[:bus_arcs][i]) == sum(_m[:qg][g] for g in ref[:bus_gens][i]) - sum(load["qd"] * params["load_multiplier"] for (l, load) in ref[:load] if load["load_bus"] == i) + bs * _m[:w][i])
     end
 
     # Valid inequality: if net load at a node > 0, then at least one line connected to it needs to be turned on.
@@ -245,7 +245,7 @@ function create_constraints(_m, ref, params, bd_data)
                         expr += _m[:z][bp]
                     end
                 end
-                @constraint(_m, expr >= 1)
+                JuMP.@constraint(_m, expr >= 1)
             end
         end
     end
@@ -278,58 +278,58 @@ function create_constraints(_m, ref, params, bd_data)
 
        # AC Line Flow Constraints
        if params["model"] == "opf"
-            @constraint(_m, p_fr ==  (g + g_fr) / tm^2 * w_fr + (-g * tr + b * ti) / tm^2 * wr_br + (-b * tr - g * ti) / tm^2 * wi_br )
-            @constraint(_m, q_fr == -(b + b_fr) / tm^2 * w_fr - (-b * tr - g * ti) / tm^2 * wr_br + (-g * tr + b * ti) / tm^2 * wi_br )
+            JuMP.@constraint(_m, p_fr ==  (g + g_fr) / tm^2 * w_fr + (-g * tr + b * ti) / tm^2 * wr_br + (-b * tr - g * ti) / tm^2 * wi_br )
+            JuMP.@constraint(_m, q_fr == -(b + b_fr) / tm^2 * w_fr - (-b * tr - g * ti) / tm^2 * wr_br + (-g * tr + b * ti) / tm^2 * wi_br )
 
-            @constraint(_m, p_to ==  (g + g_to) * w_to + (-g * tr - b * ti) / tm^2 * wr_br + (-b * tr + g * ti) / tm^2 * -wi_br )
-            @constraint(_m, q_to == -(b + b_to) * w_to - (-b * tr + g * ti) / tm^2 * wr_br + (-g * tr - b * ti) / tm^2 * -wi_br )
+            JuMP.@constraint(_m, p_to ==  (g + g_to) * w_to + (-g * tr - b * ti) / tm^2 * wr_br + (-b * tr + g * ti) / tm^2 * -wi_br )
+            JuMP.@constraint(_m, q_to == -(b + b_to) * w_to - (-b * tr + g * ti) / tm^2 * wr_br + (-g * tr - b * ti) / tm^2 * -wi_br )
 
             # Apparent PoLimit, From and To
-            @constraint(_m, p_fr^2 + q_fr^2 <= branch["rate_a"]^2)
-            @constraint(_m, p_to^2 + q_to^2 <= branch["rate_a"]^2)
+            JuMP.@constraint(_m, p_fr^2 + q_fr^2 <= branch["rate_a"]^2)
+            JuMP.@constraint(_m, p_to^2 + q_to^2 <= branch["rate_a"]^2)
         elseif params["model"] == "ots" || params["model"] == "ots_relax"
             wz_ij = _m[:wz][bp_idx]
             wz_ji = _m[:wz][bp_idx2]
             z_ij = _m[:z][bp_idx]
             # constraint (3a) (3b)
-            @constraint(_m, p_fr ==  (g + g_fr) / tm^2 * wz_ij + (-g * tr + b * ti) / tm^2 * wr_br + (-b * tr - g * ti) / tm^2 * wi_br )
-            @constraint(_m, q_fr == -(b + b_fr) / tm^2 * wz_ij - (-b * tr - g * ti) / tm^2 * wr_br + (-g * tr + b * ti) / tm^2 * wi_br )
+            JuMP.@constraint(_m, p_fr ==  (g + g_fr) / tm^2 * wz_ij + (-g * tr + b * ti) / tm^2 * wr_br + (-b * tr - g * ti) / tm^2 * wi_br )
+            JuMP.@constraint(_m, q_fr == -(b + b_fr) / tm^2 * wz_ij - (-b * tr - g * ti) / tm^2 * wr_br + (-g * tr + b * ti) / tm^2 * wi_br )
             # constraint (3c)
-            @constraint(_m, wz_ij <= w_fr - (1 - z_ij) * ref[:bus][branch["f_bus"]]["vmin"]^2)
-            @constraint(_m, wz_ij >= w_fr - (1 - z_ij) * ref[:bus][branch["f_bus"]]["vmax"]^2)
+            JuMP.@constraint(_m, wz_ij <= w_fr - (1 - z_ij) * ref[:bus][branch["f_bus"]]["vmin"]^2)
+            JuMP.@constraint(_m, wz_ij >= w_fr - (1 - z_ij) * ref[:bus][branch["f_bus"]]["vmax"]^2)
             # constraint (3d)
-            @constraint(_m, wz_ji <= w_to - (1 - z_ij) * ref[:bus][branch["t_bus"]]["vmin"]^2)
-            @constraint(_m, wz_ji >= w_to - (1 - z_ij) * ref[:bus][branch["t_bus"]]["vmax"]^2)
+            JuMP.@constraint(_m, wz_ji <= w_to - (1 - z_ij) * ref[:bus][branch["t_bus"]]["vmin"]^2)
+            JuMP.@constraint(_m, wz_ji >= w_to - (1 - z_ij) * ref[:bus][branch["t_bus"]]["vmax"]^2)
             # if params["ext_cons"]
                 # constraint (3e)
-            @constraint(_m, wz_ij >= ref[:bus][branch["f_bus"]]["vmin"]^2 * z_ij)
-            @constraint(_m, wz_ij <= ref[:bus][branch["f_bus"]]["vmax"]^2 * z_ij)
+            JuMP.@constraint(_m, wz_ij >= ref[:bus][branch["f_bus"]]["vmin"]^2 * z_ij)
+            JuMP.@constraint(_m, wz_ij <= ref[:bus][branch["f_bus"]]["vmax"]^2 * z_ij)
             # constraint (3f)
-            @constraint(_m, wz_ji >= ref[:bus][branch["t_bus"]]["vmin"]^2 * z_ij)
-            @constraint(_m, wz_ji <= ref[:bus][branch["t_bus"]]["vmax"]^2 * z_ij)
+            JuMP.@constraint(_m, wz_ji >= ref[:bus][branch["t_bus"]]["vmin"]^2 * z_ij)
+            JuMP.@constraint(_m, wz_ji <= ref[:bus][branch["t_bus"]]["vmax"]^2 * z_ij)
             # end
             # constraint (d)
-            @constraint(_m, p_to ==  (g + g_to) * wz_ji + (-g * tr - b * ti) / tm^2 * wr_br + (-b * tr + g * ti) / tm^2 * -wi_br )
-            @constraint(_m, q_to == -(b + b_to) * wz_ji - (-b * tr + g * ti) / tm^2 * wr_br + (-g * tr - b * ti) / tm^2 * -wi_br )
+            JuMP.@constraint(_m, p_to ==  (g + g_to) * wz_ji + (-g * tr - b * ti) / tm^2 * wr_br + (-b * tr + g * ti) / tm^2 * -wi_br )
+            JuMP.@constraint(_m, q_to == -(b + b_to) * wz_ji - (-b * tr + g * ti) / tm^2 * wr_br + (-g * tr - b * ti) / tm^2 * -wi_br )
 
             # constraints (2j)
-            @constraint(_m, p_fr^2 + q_fr^2 <= branch["rate_a"]^2 * _m[:z][bp_idx]^2)
-            @constraint(_m, p_to^2 + q_to^2 <= branch["rate_a"]^2 * _m[:z][bp_idx]^2)
+            JuMP.@constraint(_m, p_fr^2 + q_fr^2 <= branch["rate_a"]^2 * _m[:z][bp_idx]^2)
+            JuMP.@constraint(_m, p_to^2 + q_to^2 <= branch["rate_a"]^2 * _m[:z][bp_idx]^2)
         end
 
         # if params["ext_cons"]
            # Phase Angle Difference Limit
-        @constraint(_m, wi_br <= tan(branch["angmax"]) * wr_br)
-        @constraint(_m, wi_br >= tan(branch["angmin"]) * wr_br)
+        JuMP.@constraint(_m, wi_br <= tan(branch["angmax"]) * wr_br)
+        JuMP.@constraint(_m, wi_br >= tan(branch["angmin"]) * wr_br)
         # end
     end
 
     # Relationship between cs/w variables and their reversed counterparts.
     for bp in keys(ref[:buspairs])
-        @constraint(_m, _m[:si][bp] == - _m[:si][(bp[2], bp[1])])
-        @constraint(_m, _m[:wi][bp] == - _m[:wi][(bp[2], bp[1])])
-        @constraint(_m, _m[:cs][bp] == _m[:cs][(bp[2], bp[1])])
-        @constraint(_m, _m[:wr][bp] == _m[:wr][(bp[2], bp[1])])
+        JuMP.@constraint(_m, _m[:si][bp] == - _m[:si][(bp[2], bp[1])])
+        JuMP.@constraint(_m, _m[:wi][bp] == - _m[:wi][(bp[2], bp[1])])
+        JuMP.@constraint(_m, _m[:cs][bp] == _m[:cs][(bp[2], bp[1])])
+        JuMP.@constraint(_m, _m[:wr][bp] == _m[:wr][(bp[2], bp[1])])
     end
 
     # heuristic: all branches in the spanning tree are turned on.
@@ -338,9 +338,9 @@ function create_constraints(_m, ref, params, bd_data)
         for bp in span_tree_edges 
             # The tree edges may have diffrent order than original edges.
             if bp in keys(ref[:buspairs])
-                @constraint(_m, _m[:z][bp] == 1)
+                JuMP.@constraint(_m, _m[:z][bp] == 1)
             else
-                @constraint(_m, _m[:z][(bp[2], bp[1])] == 1)
+                JuMP.@constraint(_m, _m[:z][(bp[2], bp[1])] == 1)
             end
         end
     end
@@ -348,25 +348,25 @@ function create_constraints(_m, ref, params, bd_data)
     if params["off_insights"]
         on_lines_li, off_lines_li = on_off_lines(instance, data, ref)
         for bp in on_lines_li
-            @constraint(_m, _m[:z][bp] == 1)
+            JuMP.@constraint(_m, _m[:z][bp] == 1)
         end
         for bp in off_lines_li
-            @constraint(_m, _m[:z][bp] == 0)
+            JuMP.@constraint(_m, _m[:z][bp] == 0)
         end
     end
 
     if params["debug"]
-        # @constraint(_m, _m[:vm][2] == 1.0100704619038228)
-        # @constraint(_m, _m[:vm][3] == 0.9928105071732412)
-        # @constraint(_m, _m[:vm][1] == 1.0912817221698126)
-        @constraint(_m, _m[:z][(2, 25)] == 0)
-        @constraint(_m, _m[:z][(12, 11)] == 0)
-        @constraint(_m, _m[:z][(3, 18)] == 0)
-        @constraint(_m, _m[:z][(4, 5)] == 0)
+        # JuMP.@constraint(_m, _m[:vm][2] == 1.0100704619038228)
+        # JuMP.@constraint(_m, _m[:vm][3] == 0.9928105071732412)
+        # JuMP.@constraint(_m, _m[:vm][1] == 1.0912817221698126)
+        JuMP.@constraint(_m, _m[:z][(2, 25)] == 0)
+        JuMP.@constraint(_m, _m[:z][(12, 11)] == 0)
+        JuMP.@constraint(_m, _m[:z][(3, 18)] == 0)
+        JuMP.@constraint(_m, _m[:z][(4, 5)] == 0)
     end
 
-    # @constraint(_m, _m[:p][(33, 25, 24)] == 0)
-    # @constraint(_m, _m[:q][(33, 25, 24)] == 0)
+    # JuMP.@constraint(_m, _m[:p][(33, 25, 24)] == 0)
+    # JuMP.@constraint(_m, _m[:q][(33, 25, 24)] == 0)
 end
 
 # Debug PM.jl QC RM formulation.
@@ -453,19 +453,19 @@ function fix_vals(_m)
     for i in 1:3
         fr_ind = line_ind[i][1]
         to_ind = line_ind[i][2]
-        @constraint(_m, _m[:va][i] == vals[:va][i])
-        @constraint(_m, _m[:td][(fr_ind, to_ind)] == vals[:td][i])
+        JuMP.@constraint(_m, _m[:va][i] == vals[:va][i])
+        JuMP.@constraint(_m, _m[:td][(fr_ind, to_ind)] == vals[:td][i])
 
-        @constraint(_m, _m[:cs][(fr_ind, to_ind)] == vals[:cs][i])
-        @constraint(_m, _m[:si][(fr_ind, to_ind)] == vals[:si][i])
-        @constraint(_m, _m[:vv][(fr_ind, to_ind)] == vals[:vv][i])
-        @constraint(_m, _m[:wr][(fr_ind, to_ind)] == vals[:wr][i])
-        # @constraint(_m, _m[:wi][(fr_ind, to_ind)] == vals[:wi][i])
+        JuMP.@constraint(_m, _m[:cs][(fr_ind, to_ind)] == vals[:cs][i])
+        JuMP.@constraint(_m, _m[:si][(fr_ind, to_ind)] == vals[:si][i])
+        JuMP.@constraint(_m, _m[:vv][(fr_ind, to_ind)] == vals[:vv][i])
+        JuMP.@constraint(_m, _m[:wr][(fr_ind, to_ind)] == vals[:wr][i])
+        # JuMP.@constraint(_m, _m[:wi][(fr_ind, to_ind)] == vals[:wi][i])
 
-        @constraint(_m, _m[:vm][i] == vals[:vm][i])
-        @constraint(_m, _m[:vmz][(fr_ind, to_ind)] == vals[:vm_fr][i])
-        @constraint(_m, _m[:vmz][(to_ind, fr_ind)] == vals[:vm_to][i])
-        @constraint(_m, _m[:z][(fr_ind, to_ind)] == vals[:z][i])
+        JuMP.@constraint(_m, _m[:vm][i] == vals[:vm][i])
+        JuMP.@constraint(_m, _m[:vmz][(fr_ind, to_ind)] == vals[:vm_fr][i])
+        JuMP.@constraint(_m, _m[:vmz][(to_ind, fr_ind)] == vals[:vm_to][i])
+        JuMP.@constraint(_m, _m[:z][(fr_ind, to_ind)] == vals[:z][i])
     end
     return vals
 end
@@ -553,18 +553,18 @@ function fix_vals_old(_m)
     for i in 1:3
         fr_ind = line_ind[i][1]
         to_ind = line_ind[i][2]
-        @constraint(_m, _m[:va][i] == vals[:va][i])
-        @constraint(_m, _m[:td][(fr_ind, to_ind)] == vals[:td][i])
+        JuMP.@constraint(_m, _m[:va][i] == vals[:va][i])
+        JuMP.@constraint(_m, _m[:td][(fr_ind, to_ind)] == vals[:td][i])
 
-        @constraint(_m, _m[:cs][(fr_ind, to_ind)] == vals[:cs][i])
-        @constraint(_m, _m[:si][(fr_ind, to_ind)] == vals[:si][i])
-        @constraint(_m, _m[:vv][(fr_ind, to_ind)] == vals[:vv][i])
-        @constraint(_m, _m[:wr][(fr_ind, to_ind)] == vals[:wr][i])
-        # @constraint(_m, _m[:wi][(fr_ind, to_ind)] == vals[:wi][i])
+        JuMP.@constraint(_m, _m[:cs][(fr_ind, to_ind)] == vals[:cs][i])
+        JuMP.@constraint(_m, _m[:si][(fr_ind, to_ind)] == vals[:si][i])
+        JuMP.@constraint(_m, _m[:vv][(fr_ind, to_ind)] == vals[:vv][i])
+        JuMP.@constraint(_m, _m[:wr][(fr_ind, to_ind)] == vals[:wr][i])
+        # JuMP.@constraint(_m, _m[:wi][(fr_ind, to_ind)] == vals[:wi][i])
 
-        @constraint(_m, _m[:vm][i] == vals[:vm][i])
-        @constraint(_m, _m[:vmz][(fr_ind, to_ind)] == vals[:vm_fr][i])
-        @constraint(_m, _m[:vmz][(to_ind, fr_ind)] == vals[:vm_to][i])
-        @constraint(_m, _m[:z][(fr_ind, to_ind)] == vals[:z][i])
+        JuMP.@constraint(_m, _m[:vm][i] == vals[:vm][i])
+        JuMP.@constraint(_m, _m[:vmz][(fr_ind, to_ind)] == vals[:vm_fr][i])
+        JuMP.@constraint(_m, _m[:vmz][(to_ind, fr_ind)] == vals[:vm_to][i])
+        JuMP.@constraint(_m, _m[:z][(fr_ind, to_ind)] == vals[:z][i])
     end
 end
