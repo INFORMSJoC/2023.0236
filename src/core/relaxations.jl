@@ -41,16 +41,6 @@ function mcc_correct_ap(m, xy, _ap, _trigo1, _trigo2)
    return m
 end
 
-# function mcc_on_off(m,xy,x,y,xz,yz,z)
-#   lb = [JuMP.lower_bound(x), JuMP.lower_bound(y)]
-#   ub = [JuMP.upper_bound(x), JuMP.upper_bound(y)]
-#   JuMP.@variable(m, w)
-#   JuMP.@constraint(m, xy >= lb[1]*yz + lb[2]*xz - lb[1]*lb[2]*z)
-#   JuMP.@constraint(m, xy >= ub[1]*yz + ub[2]*xz - ub[1]*ub[2]*z)
-#   JuMP.@constraint(m, xy <= lb[1]*yz + ub[2]*xz - lb[1]*ub[2]*z)
-#   JuMP.@constraint(m, xy <= ub[1]*yz + lb[2]*xz - ub[1]*lb[2]*z)
-# end
-
 function quadratic_relax(m,xy,x)
   lb = JuMP.lower_bound(x)
   ub = JuMP.upper_bound(x)

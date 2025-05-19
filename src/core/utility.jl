@@ -1,43 +1,26 @@
 function Get_bounds(v)
-   v_l = [lower_bound(v[1]), upper_bound(v[1])]
-   v_u = [lower_bound(v[2]), upper_bound(v[2])]
-   M = v_l*v_u'
-
-   if length(v) == 2
-      # Bilinear
-      return minimum(M), maximum(M)
-
-   elseif (length(v) == 3) || (length(v) == 4)
-      M1 = zeros(Float64, (2,2,2))
-      M1[:,:,1] = M*lower_bound(v[3])
-      M1[:,:,2] = M*upper_bound(v[3])
-      if length(v) == 3
-         # Trilinear
-         return minimum(M1), maximum(M1)
-      elseif length(v) == 4
-         # Quadrilinear
-         M2 = zeros(Float64, (2,2,4))
-         M2[:,:,1:2] = M1*lower_bound(v[4])
-         M2[:,:,3:4] = M1*upper_bound(v[4])
-         return minimum(M2), maximum(M2)
-      end
-   end
+    v_l = [JuMP.lower_bound(v[1]), JuMP.upper_bound(v[1])]
+    v_u = [JuMP.lower_bound(v[2]), JuMP.upper_bound(v[2])]
+    M = v_l*v_u'
+    
+    length(v) == 2 && return minimum(M), maximum(M)
+    
+    M1 = zeros(Float64, (2,2,2))
+    M1[:,:,1] = M*JuMP.lower_bound(v[3])
+    M1[:,:,2] = M*JuMP.JuMP.upper_bound(v[3])
+    
+    length(v) == 3 && return minimum(M1), maximum(M1)
+    
+    M2 = zeros(Float64, (2,2,4))
+    M2[:,:,1:2] = M1*JuMP.lower_bound(v[4])
+    M2[:,:,3:4] = M1*JuMP.upper_bound(v[4])
+    return minimum(M2), maximum(M2)
 end
 
 function Get_cycle_adjacency(c)
-   A = Set()
-   for i=1:(length(c)-1)
-      I = min(c[i],c[i+1])
-      J = max(c[i],c[i+1])
-      # @printf("I: %s, J: %s\n", I, J)
-      # @assert (I,J) in keys(ref[:buspairs])
-      push!(A, (I,J))
-   end
-   I = min(c[1],c[end])
-   J = max(c[1],c[end])
-   # @assert (I,J) in keys(ref[:buspairs])
-   push!(A, (I,J))
-   return A
+    A = Set((min(c[i],c[i+1]), max(c[i],c[i+1])) for i in 1:(length(c)-1))
+    push!(A, (min(c[1],c[end]), max(c[1],c[end])))
+    return A
 end
 
 function Get_unique_cycles(cyc)
@@ -133,6 +116,7 @@ function Get_cycles(ref, params)
          cycle[str] = cyc[i - 2]
       end
    end
+   
    return cycle
 end
 
@@ -262,134 +246,6 @@ function cartesian_product(lb, ub)
    end
    return collect(Base.product(v...)) # The splat operator, ..., takes out the entries in v.
 end
-
-# function cartesian_product(lb, ub)
-#     # Input: lb and ub are the vectors of lower and upper bounds of the variables
-#     # Output: Generate cartesian product of sets of 2 elements, i.e., lower and upper bounds of variables
-#
-#     @assert length(lb) == length(ub)
-#     n = length(lb)
-#     # @assert n <= 8
-#
-#     (typeof(lb[1]) == String) && (cart_prod = Matrix{String}(undef, 2^n, n))
-#     (typeof(lb[1]) != String) && (cart_prod = Matrix{Float64}(undef, 2^n, n))
-#     ii = 1
-#
-#     if n == 2
-#        v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]];
-#        for i=1:2
-#           for j=1:2
-#             cart_prod[ii,:] =  [v1[j], v2[i]]
-#             ii += 1
-#           end
-#        end
-#
-#     elseif n == 3
-#        v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]]; v3 = [lb[3], ub[3]];
-#        for i=1:2
-#           for j=1:2
-#              for k=1:2
-#                 cart_prod[ii,:] =  [v1[k], v2[j], v3[i]]
-#                 ii += 1
-#              end
-#           end
-#        end
-#
-#     elseif n == 4
-#        v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]]; v3 = [lb[3], ub[3]]; v4 = [lb[4], ub[4]];
-#        for i=1:2
-#           for j=1:2
-#              for k=1:2
-#                 for l=1:2
-#                    cart_prod[ii,:] =  [v1[l], v2[k], v3[j], v4[i]]
-#                    ii += 1
-#                 end
-#              end
-#           end
-#        end
-#
-#     elseif n == 5
-#        v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]]; v3 = [lb[3], ub[3]]; v4 = [lb[4], ub[4]]; v5 = [lb[5], ub[5]];
-#        for i=1:2
-#           for j=1:2
-#              for k=1:2
-#                 for l=1:2
-#                    for m=1:2
-#                       cart_prod[ii,:] =  [v1[m], v2[l], v3[k], v4[j], v5[i]]
-#                       ii += 1
-#                    end
-#                 end
-#              end
-#           end
-#        end
-#
-#     elseif n == 6
-#        v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]]; v3 = [lb[3], ub[3]]; v4 = [lb[4], ub[4]]; v5 = [lb[5], ub[5]]; v6 = [lb[6], ub[6]];
-#        for i=1:2
-#           for j=1:2
-#              for k=1:2
-#                 for l=1:2
-#                    for m=1:2
-#                       for o=1:2
-#                          cart_prod[ii,:] =  [v1[o], v2[m], v3[l], v4[k], v5[j], v6[i]]
-#                          ii += 1
-#                       end
-#                    end
-#                 end
-#              end
-#           end
-#        end
-#
-#     elseif n == 7
-#        v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]]; v3 = [lb[3], ub[3]]; v4 = [lb[4], ub[4]]; v5 = [lb[5], ub[5]]; v6 = [lb[6], ub[6]]; v7 = [lb[7], ub[7]];
-#        for i=1:2
-#           for j=1:2
-#              for k=1:2
-#                 for l=1:2
-#                    for m=1:2
-#                       for o=1:2
-#                          for p=1:2
-#                             cart_prod[ii,:] =  [v1[p], v2[o], v3[m], v4[l], v5[k], v6[j], v7[i]]
-#                             ii += 1
-#                          end
-#                       end
-#                    end
-#                 end
-#              end
-#           end
-#        end
-#
-#     elseif n == 8
-#         v1 = [lb[1], ub[1]]; v2 = [lb[2], ub[2]]; v3 = [lb[3], ub[3]]; v4 = [lb[4], ub[4]]; v5 = [lb[5], ub[5]]; v6 = [lb[6], ub[6]]; v7 = [lb[7], ub[7]]; v8 = [lb[8], ub[8]];
-#         for i=1:2
-#            for j=1:2
-#               for k=1:2
-#                  for l=1:2
-#                     for m=1:2
-#                        for o=1:2
-#                           for p=1:2
-#                             for q=1:2
-#                                 cart_prod[ii,:] = [v1[q], v2[p], v3[o], v4[m], v5[l], v6[k], v7[j], v8[i]]
-#                                 ii += 1
-#                             end
-#                           end
-#                        end
-#                     end
-#                  end
-#               end
-#            end
-#         end
-#
-#      else
-#         v = []
-#         for i in 1:n
-#            push!(v, (lb[i], ub[i]))
-#         end
-#         cart_prod = collect(Base.product(v...))
-#     end
-#
-#     return cart_prod
-# end
 
 # No more need this function after defining cs and w for reversed arcs.
 # For cycle constraints, sort the index of an arc then return the corresponding  trigonometric variable. Input: _arc: tuple, an arc; "trigo": string, "cs" or "si".

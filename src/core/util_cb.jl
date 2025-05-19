@@ -2,19 +2,8 @@
 
 # Create the big-M for disjunctive Benders cuts for cycles in ACOTS.
 function cycle_big_M(gamma_bar, x, cutvareq_lb, cutvareq_ub)
-  M = 0.0
-  for i in 1:length(gamma_bar)
-    if typeof(x[i]) == VariableRef
-      ub = cutvareq_ub[i]
-      lb = cutvareq_lb[i]
-      if gamma_bar[i] > 0
-        M += gamma_bar[i] * max(0, ub)
-      else
-        M += gamma_bar[i] * min(0, lb)
-      end
-    end
-  end
-  return M
+    sum(gamma_bar[i] * (gamma_bar[i] > 0 ? max(0, cutvareq_ub[i]) : min(0, cutvareq_lb[i])) 
+        for i in 1:length(gamma_bar) if typeof(x[i]) == VariableRef)
 end
 
 # Getting the RHS of subproblem equality constraints, i.e. the cs_bar and si_bar, from cb_data.

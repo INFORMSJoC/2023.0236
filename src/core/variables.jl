@@ -527,8 +527,8 @@ function warm_start_ots_cyc(vars, bp_li, cycle_3_4)
       the_var = vars[item]
       the_sol = sol[item]
       for item2 in the_var
-         # set_lower_bound(item2, the_sol[string(item2)])
-         # set_upper_bound(item2, the_sol[string(item2)])
+         # JuMP.set_lower_bound(item2, the_sol[string(item2)])
+         # JuMP.set_upper_bound(item2, the_sol[string(item2)])
          JuMP.set_start_value(item2, the_sol[string(item2)])
       end
    end
@@ -551,7 +551,7 @@ function preprocess_pqz(_m)
            max_load = max(net_pd - (sum_rate_a - ref[:branch][branch_idx]["rate_a"]), net_qd - (sum_rate_a - ref[:branch][branch_idx]["rate_a"]))
            println("load_bus: ", load_bus, ", bp_idx: ", bp_idx, ", max_load: ", max_load)
            if max_load > 1e-3
-             set_lower_bound(_m[:z][bp_idx], 1)
+             JuMP.set_lower_bound(_m[:z][bp_idx], 1)
              tightened = true
            end
         end
