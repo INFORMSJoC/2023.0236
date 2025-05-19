@@ -1,6 +1,6 @@
 function mcc(m,xy,x,y)
-  lb = [lower_bound(x), lower_bound(y)]
-  ub = [upper_bound(x), upper_bound(y)]
+  lb = [JuMP.lower_bound(x), JuMP.lower_bound(y)]
+  ub = [JuMP.upper_bound(x), JuMP.upper_bound(y)]
   JuMP.@constraint(m, xy >= lb[1]*y + lb[2]*x - lb[1]*lb[2])
   JuMP.@constraint(m, xy >= ub[1]*y + ub[2]*x - ub[1]*ub[2])
   JuMP.@constraint(m, xy <= lb[1]*y + ub[2]*x - lb[1]*ub[2])
@@ -19,18 +19,18 @@ function mcc_correct_ap(m, xy, _ap, _trigo1, _trigo2)
    ub_x = 0
    ub_y = 0
    if _trigo1 == "cs" ||(_ap[1][1] < _ap[1][2])
-      lb_x = lower_bound(x)
-      ub_x = upper_bound(x)
+      lb_x = JuMP.lower_bound(x)
+      ub_x = JuMP.upper_bound(x)
    else
-      lb_x = - upper_bound(si[(_ap[1][2], _ap[1][1])])
-      ub_x = - lower_bound(si[(_ap[1][2], _ap[1][1])])
+      lb_x = - JuMP.upper_bound(si[(_ap[1][2], _ap[1][1])])
+      ub_x = - JuMP.lower_bound(si[(_ap[1][2], _ap[1][1])])
    end
    if _trigo2 == "cs" ||(_ap[2][1] < _ap[2][2])
-      lb_y = lower_bound(y)
-      ub_y = upper_bound(y)
+      lb_y = JuMP.lower_bound(y)
+      ub_y = JuMP.upper_bound(y)
    else
-      lb_y = - upper_bound(si[(_ap[2][2], _ap[2][1])])
-      ub_y = - lower_bound(si[(_ap[2][2], _ap[2][1])])
+      lb_y = - JuMP.upper_bound(si[(_ap[2][2], _ap[2][1])])
+      ub_y = - JuMP.lower_bound(si[(_ap[2][2], _ap[2][1])])
    end
    lb = [lb_x, lb_y]
    ub = [ub_x, ub_y]
@@ -42,8 +42,8 @@ function mcc_correct_ap(m, xy, _ap, _trigo1, _trigo2)
 end
 
 # function mcc_on_off(m,xy,x,y,xz,yz,z)
-#   lb = [lower_bound(x), lower_bound(y)]
-#   ub = [upper_bound(x), upper_bound(y)]
+#   lb = [JuMP.lower_bound(x), JuMP.lower_bound(y)]
+#   ub = [JuMP.upper_bound(x), JuMP.upper_bound(y)]
 #   JuMP.@variable(m, w)
 #   JuMP.@constraint(m, xy >= lb[1]*yz + lb[2]*xz - lb[1]*lb[2]*z)
 #   JuMP.@constraint(m, xy >= ub[1]*yz + ub[2]*xz - ub[1]*ub[2]*z)
@@ -52,16 +52,16 @@ end
 # end
 
 function quadratic_relax(m,xy,x)
-  lb = lower_bound(x)
-  ub = upper_bound(x)
+  lb = JuMP.lower_bound(x)
+  ub = JuMP.upper_bound(x)
   JuMP.@constraint(m, xy >= x^2)
   JuMP.@constraint(m, xy <= (lb + ub)*x - lb*ub)
   return m
 end
 
 function conv_tri(m,x_lift,x1,x2,x3,λ)
-   lb = [lower_bound(x1), lower_bound(x2), lower_bound(x3)]
-   ub = [upper_bound(x1), upper_bound(x2), upper_bound(x3)]
+   lb = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(x3)]
+   ub = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(x3)]
    ex_pt = [lb[1]*lb[2]*lb[3],
             lb[1]*ub[2]*lb[3],
             ub[1]*lb[2]*lb[3],
@@ -83,8 +83,8 @@ function conv_tri(m,x_lift,x1,x2,x3,λ)
 end
 
 function conv_tri_on_off(m, x_lift, x1, x2, x3, λ, z, x3_bd)
-   lb = [lower_bound(x1), lower_bound(x2), x3_bd[1]]
-   ub = [upper_bound(x1), upper_bound(x2), x3_bd[2]]
+   lb = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), x3_bd[1]]
+   ub = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), x3_bd[2]]
    ex_pt = [lb[1]*lb[2]*lb[3],
             lb[1]*ub[2]*lb[3],
             ub[1]*lb[2]*lb[3],
@@ -93,9 +93,7 @@ function conv_tri_on_off(m, x_lift, x1, x2, x3, λ, z, x3_bd)
             lb[1]*ub[2]*ub[3],
             ub[1]*lb[2]*ub[3],
             ub[1]*ub[2]*ub[3]]
-   # println("lb: ", lb)
-   # println("ub: ", ub)
-   # println("ex_pt: ", ex_pt)
+   
    JuMP.@constraint(m, x_lift == sum(ex_pt[i]*λ[i] for i=1:8))
 
    JuMP.@constraint(m, x1 <= (λ[1] + λ[2] + λ[5] + λ[6])*lb[1] + (λ[3] + λ[4] + λ[7] + λ[8])*ub[1] + ub[1] * (1 - z))
@@ -114,13 +112,13 @@ end
 
 function conv_tri_sum(m,x_lift,y_lift,x1,x2,x3,y3,λ_x,λ_y)
    # trilinear term x1*x2*x3 relaxation
-   lb_x = [lower_bound(x1), lower_bound(x2), lower_bound(x3)]
-   ub_x = [upper_bound(x1), upper_bound(x2), upper_bound(x3)]
+   lb_x = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(x3)]
+   ub_x = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(x3)]
    conv_tri(m, x_lift, x1, x2, x3, λ_x)
 
    # trilinear term x1*x2*y3 relaxation
-   lb_y = [lower_bound(x1), lower_bound(x2), lower_bound(y3)]
-   ub_y = [upper_bound(x1), upper_bound(x2), upper_bound(y3)]
+   lb_y = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(y3)]
+   ub_y = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(y3)]
    conv_tri(m, y_lift, x1, x2, y3, λ_y)
 
    # tying constraint
@@ -140,12 +138,12 @@ end
 # For ACOTS: x_lift -> w^R, y_lift -> w^I, x1 -> v_i, x2 -> v_j, x3 -> cs, y_3 -> si, λ_hat -> λ_hat_ij
 function conv_tri_sum_on_off(m, x_lift, y_lift, x1, x2, x3, y3, λ_x, λ_y, z, x3_y3_bd)
    # trilinear term x1*x2*x3 relaxation
-   lb_x = [lower_bound(x1), lower_bound(x2), x3_y3_bd[1][1]]
-   ub_x = [upper_bound(x1), upper_bound(x2), x3_y3_bd[1][2]]
+   lb_x = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), x3_y3_bd[1][1]]
+   ub_x = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), x3_y3_bd[1][2]]
 
    # trilinear term x1*x2*y3 relaxation
-   lb_y = [lower_bound(x1), lower_bound(x2), x3_y3_bd[2][1]]
-   ub_y = [upper_bound(x1), upper_bound(x2), x3_y3_bd[2][2]]
+   lb_y = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), x3_y3_bd[2][1]]
+   ub_y = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), x3_y3_bd[2][2]]
 
    conv_tri_on_off(m, x_lift, x1, x2, x3, λ_x, z, x3_y3_bd[1])
    conv_tri_on_off(m, y_lift, x1, x2, y3, λ_y, z, x3_y3_bd[2])
@@ -175,8 +173,8 @@ function conv_tri_sum_rlt_1(m,x_lift,y_lift,x1,x2,x3,y3,λ_x,λ_y,x3_lift_i,x3_l
       mcc(m, λ_y3[i], λ_y[i], y3)
    end
 
-   lb = [lower_bound(x1), lower_bound(x2), lower_bound(x3)]
-   ub = [upper_bound(x1), upper_bound(x2), upper_bound(x3)]
+   lb = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(x3)]
+   ub = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(x3)]
    ex_pt = [lb[1]*lb[3],
             lb[1]*lb[3],
             ub[1]*lb[3],
@@ -197,8 +195,8 @@ function conv_tri_sum_rlt_1(m,x_lift,y_lift,x1,x2,x3,y3,λ_x,λ_y,x3_lift_i,x3_l
             ub[2]*ub[3]]
    JuMP.@constraint(m, x3_lift_j == sum(ex_pt[i]*λ_x3[i] for i=1:8))
 
-   lb = [lower_bound(x1), lower_bound(x2), lower_bound(y3)]
-   ub = [upper_bound(x1), upper_bound(x2), upper_bound(y3)]
+   lb = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(y3)]
+   ub = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(y3)]
    ex_pt = [lb[1]*lb[3],
             lb[1]*lb[3],
             ub[1]*lb[3],
@@ -230,10 +228,10 @@ end
 
 function conv_tri_sum_rlt_2(m,x_lift,y_lift,x1,x2,x3,y3,λ_x,λ_y,x3_lift,y3_lift,λ_x3,λ_y3)
 
-   lb_x = [lower_bound(x1), lower_bound(x2), lower_bound(x3)]
-   ub_x = [upper_bound(x1), upper_bound(x2), upper_bound(x3)]
-   lb_y = [lower_bound(x1), lower_bound(x2), lower_bound(y3)]
-   ub_y = [upper_bound(x1), upper_bound(x2), upper_bound(y3)]
+   lb_x = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(x3)]
+   ub_x = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(x3)]
+   lb_y = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(y3)]
+   ub_y = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(y3)]
    val = [lb_x[1]*lb_x[2],
           lb_x[1]*ub_x[2],
           ub_x[1]*lb_x[2],
@@ -249,8 +247,8 @@ function conv_tri_sum_rlt_2(m,x_lift,y_lift,x1,x2,x3,y3,λ_x,λ_y,x3_lift,y3_lif
       mcc(m, λ_y3[i], λ_y[i], y3)
    end
 
-   lb = [lower_bound(x1), lower_bound(x2), lower_bound(x3)]
-   ub = [upper_bound(x1), upper_bound(x2), upper_bound(x3)]
+   lb = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(x3)]
+   ub = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(x3)]
    ex_pt = [lb[1]*lb[2]*lb[3],
             lb[1]*ub[2]*lb[3],
             ub[1]*lb[2]*lb[3],
@@ -261,8 +259,8 @@ function conv_tri_sum_rlt_2(m,x_lift,y_lift,x1,x2,x3,y3,λ_x,λ_y,x3_lift,y3_lif
             ub[1]*ub[2]*ub[3]]
    JuMP.@constraint(m, x3_lift == sum(ex_pt[i]*λ_x3[i] for i=1:8))
 
-   lb = [lower_bound(x1), lower_bound(x2), lower_bound(y3)]
-   ub = [upper_bound(x1), upper_bound(x2), upper_bound(y3)]
+   lb = [JuMP.lower_bound(x1), JuMP.lower_bound(x2), JuMP.lower_bound(y3)]
+   ub = [JuMP.upper_bound(x1), JuMP.upper_bound(x2), JuMP.upper_bound(y3)]
    ex_pt = [lb[1]*lb[2]*lb[3],
             lb[1]*ub[2]*lb[3],
             ub[1]*lb[2]*lb[3],
@@ -452,8 +450,8 @@ function conv_bi_x_li(m, cyc, x_li, expairs, params, x_type, x_li_bar=:x_li_bar)
       λ = m[:λ_w]
       x = m[:x_w]
    end
-   lb = [lower_bound(var) for var in x_li]
-   ub = [upper_bound(var) for var in x_li]
+   lb = [JuMP.lower_bound(var) for var in x_li]
+   ub = [JuMP.upper_bound(var) for var in x_li]
    X = cartesian_product(lb,ub)
    dim = length(x_li)
    # print(X)

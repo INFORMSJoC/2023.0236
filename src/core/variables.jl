@@ -423,12 +423,12 @@ function variables(_m, ref, params)
    if params["warm_start"]
       if params["model"] == "opf"
          for i in keys(ref[:bus])
-            # set_start_value(va[i], )
-            set_start_value(vm[i], (ref[:bus][i]["vmax"] + ref[:bus][i]["vmin"]) / 2)
+            # JuMP.set_start_value(va[i], )
+            JuMP.set_start_value(vm[i], (ref[:bus][i]["vmax"] + ref[:bus][i]["vmin"]) / 2)
          end
          for bp in bp_li
-            set_start_value(cs[bp], (cos_min[bp] + cos_max[bp]) / 2)
-            set_start_value(si[bp], (sin_min[bp] + sin_max[bp]) / 2)
+            JuMP.set_start_value(cs[bp], (cos_min[bp] + cos_max[bp]) / 2)
+            JuMP.set_start_value(si[bp], (sin_min[bp] + sin_max[bp]) / 2)
          end
       elseif params["model"] == "ots" || params["model"] == "ots_relax"
          if params["cycle_cuts"] == false
@@ -439,7 +439,7 @@ function variables(_m, ref, params)
       end
    elseif params["partial_start"]
       for bp in keys(ref[:buspairs])
-         set_start_value(z[bp], 1)
+         JuMP.set_start_value(z[bp], 1)
       end
    end
 
@@ -483,9 +483,9 @@ function warm_start_ots(vars, bp_li)
       the_sol = sol[item]
       for ind in keys(the_var)
          if length(size(the_var)) == 1
-            set_start_value(the_var[ind[1]], the_sol[ind[1]])
+            JuMP.set_start_value(the_var[ind[1]], the_sol[ind[1]])
          elseif length(size(the_var)) == 2
-            set_start_value(the_var[ind[1], ind[2]], the_sol[ind[1], ind[2]])
+            JuMP.set_start_value(the_var[ind[1], ind[2]], the_sol[ind[1], ind[2]])
          end
       end
    end
@@ -529,7 +529,7 @@ function warm_start_ots_cyc(vars, bp_li, cycle_3_4)
       for item2 in the_var
          # set_lower_bound(item2, the_sol[string(item2)])
          # set_upper_bound(item2, the_sol[string(item2)])
-         set_start_value(item2, the_sol[string(item2)])
+         JuMP.set_start_value(item2, the_sol[string(item2)])
       end
    end
 end
