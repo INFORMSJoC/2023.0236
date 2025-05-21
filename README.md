@@ -3,7 +3,7 @@
 # Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem (2023.0236)
 
 This archive is distributed in association with the [INFORMS Journal on
-Computing](https://pubsonline.informs.org/journal/ijoc) under the [MIT License](LICENSE).
+Computing](https://pubsonline.informs.org/journal/ijoc) under the [MIT License](LICENSE). This archive includes code from PowerModelsAnnex.jl, licensed under the [BSD license](LICENSE_PM).
 
 The software and data in this repository are a snapshot of the software and data that were used in the research reported on in the paper [Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem](https://doi.org/10.1287/ijoc.2023.0236) by C. Guo, H. Nagarajan and M. Bodur.
 
@@ -73,7 +73,7 @@ To obtain the values in the "UB" column of Table 2 and Table 4, we obtain the mi
 - Non-convex ACOPF model with the set of lines switched off, as indicated by the ACOTS-QC solutions: In "params.jl", set `params["model"] = "opf"`, `params["opf_exact_pm"] = true`, and `params["turn_off_lines"] = true`, then run the "test.jl" file.
 
 #### Other columns in Table 2 and Table 4
-- Column "P": In line 54 of "tests.jl", set `args[4] = "rmc"` and `args[5] = true`, then run the "test.jl" file.
+- Column "P": In "params.jl", set `params["ots_qc_pm"] = true`. Also, in line 54 of "tests.jl", set `args[5] = true`, then run the "test.jl" file.
 - Column "E": In line 54 of "tests.jl", set `args[4] = "tri"` and `args[5] = true`, then run the "test.jl" file.
 - Column "EC": In line 54 of "tests.jl", set `args[3] = "1e-4"`, `args[4] = "tri"`, `args[5] = true`, and `args[9] = "true"`, then run the "test.jl" file.
 - Column "ECB": In line 54 of "tests.jl", set `args[4] = "tri"`, `args[5] = true`, `args[8] = "true"`, and `args[9] = "true"`, then run the "test.jl" file.

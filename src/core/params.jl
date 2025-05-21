@@ -15,7 +15,7 @@ params = Dict("model" => "ots", #opf: plain AC-OPF with QC relaxations, ots: opt
             "opf_exact_pm" => false, # solving the acopf problem locally directly with PM.jl. Obtains a local feasible solution. Used for upper bound.
             "ots_exact_pm" => false, # solving the exact acots formulation locally with PM.jl. Obtains a local feasible solution. Used for upper bound.
             "opf_qc_pm" => false,
-            "ots_qc_pm" => false, # Solving the OTS QC via PowerModels.jl
+            "ots_qc_pm" => true, # Solving the OTS QC via PowerModels.jl
             "ots_card_lb" => 0, # Number of lines must turn off in ots; default: 0.
             "ots_card_ub" => Inf, # UB for number of lines to turn on in ots; default: Inf.
             "grb_feas_tol" => args[3], # 1e-4. Useful for warm start. Default: 1e-6, min 1e-2, max 1e-9.
