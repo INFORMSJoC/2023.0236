@@ -13,9 +13,9 @@ const GRB_ENV = Gurobi.Env()
 #--------------------------;
 #  Load network data       ;
 #--------------------------;
-inst_li = CSV.read("data/instance_names/pglib_sad.csv", DataFrame, header = false)[!,"Column1"][1:24] #[1:34] [1:17] [1:24]
-append!(inst_li, CSV.read("data/instance_names/pglib_api.csv", DataFrame, header = false)[!,"Column1"][1:24])#[1:17] [1:24]
-append!(inst_li, CSV.read("data/instance_names/pglib_typ.csv", DataFrame, header = false)[!,"Column1"][1:24])#[1:17] [1:24]
+inst_li = CSV.read("data/instance_names/pglib_sad.csv", DataFrame, header = false)[!,"Column1"][1:4] #[1:34] [1:17] [1:24]
+append!(inst_li, CSV.read("data/instance_names/pglib_api.csv", DataFrame, header = false)[!,"Column1"][1:4])#[1:17] [1:24]
+append!(inst_li, CSV.read("data/instance_names/pglib_typ.csv", DataFrame, header = false)[!,"Column1"][1:4])#[1:17] [1:24]
 # inst_li = CSV.read("data/instance_names/nesta_sad.csv", DataFrame, header = false)[!,"Column1"]
 # append!(inst_li, CSV.read("data/instance_names/nesta_sad.csv", DataFrame, header = false)[!,"Column1"])
 # append!(inst_li, CSV.read("data/instance_names/nesta_api.csv", DataFrame, header = false)[!,"Column1"])
@@ -51,7 +51,7 @@ function parse_args(li)
    return args
 end
 # Input: [index of start instances, index of finish instance, grb_feas_tol, relax, warm_start, repeat_first_inst, time_limit(hour), run_obbt, cycle_cuts, callback]
-args = parse_args([1, 1, 1e-6, "tri", true, false, 2, false, false, false]) # tri, rmc # 1, 17, 24*3 = 72
+args = parse_args([1, 12, 1e-6, "tri", false, false, 2, false, false, false]) # tri, rmc # 1, 17, 24*3 = 72
 # length(inst_li)
 
 #-----------------;

@@ -64,7 +64,7 @@ The Project.toml and Manifest.toml files specify package dependencies of the Jul
 Run the "cyc_ext_mc_plot.jl" file.
 
 #### UB in Table 2 and Table 4
-*Note that the code runs all 72 instances by default. If you would like to run only the first instance, then in line 54 of "tests.jl" set `args[2] = 1`.*
+*Note that the code runs the 12 instances in the [data](data) folder by default. If you would like to run only the first instance, then in line 54 of "tests.jl" set `args[2] = 1`. If you would like to run all 72 instances in the paper, please download the additional instances from the PGLib instances repo version v20.07.*
 
 To obtain the values in the "UB" column of Table 2 and Table 4, we obtain the minimum of the following 4 values:
 - Non-convex ACOTS model (1) with the Knitro solver: In "params.jl", set `params["ots_exact_pm"] = true` and `params["minlp_solver"] = "knitro"`, then run the "test.jl" file.
