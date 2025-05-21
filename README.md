@@ -2,8 +2,7 @@
 
 # Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem (2023.0236)
 
-This archive is distributed in association with the [INFORMS Journal on
-Computing](https://pubsonline.informs.org/journal/ijoc) under the [MIT License](LICENSE). This archive includes code from PowerModelsAnnex.jl, licensed under the [BSD license](LICENSE_PM).
+This archive is distributed in association with the [INFORMS Journal on Computing](https://pubsonline.informs.org/journal/ijoc) under the [MIT License](LICENSE). This archive includes code from PowerModelsAnnex.jl, licensed under the [BSD license](LICENSE_PM).
 
 The software and data in this repository are a snapshot of the software and data that were used in the research reported on in the paper [Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem](https://doi.org/10.1287/ijoc.2023.0236) by C. Guo, H. Nagarajan and M. Bodur.
 
