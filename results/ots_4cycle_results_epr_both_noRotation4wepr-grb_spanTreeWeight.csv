@@ -1,0 +1,73 @@
+Instance,Objective_value,Run_time,Solution_status,Opt_gap,num_off_lines,off_lines,num_off_lines_leaf,off_lines_leaf,inst_ind
+pglib_opf_case3_lmbd__sad,5881.202211,0.029526326,OPTIMAL,0,0,Any[],0,Any[],1
+pglib_opf_case5_pjm__sad,25948.11,0.142496099,OPTIMAL,0,0,Any[],0,Any[],2
+pglib_opf_case14_ieee__sad,2408.14,2.093911605,OPTIMAL,0.00005,3,"Any[(12, 13), (10, 11), (13, 14)]",0,Any[],3
+pglib_opf_case24_ieee_rts__sad,75224.47,5.642927466,OPTIMAL,0.00008,0,Any[],0,Any[],4
+pglib_opf_case30_as__sad,877.1,17.64806396,OPTIMAL,0.00004,0,Any[],0,Any[],5
+pglib_opf_case30_ieee__sad,7739.24,4.198736001,OPTIMAL,0.00008,1,"Any[(9, 10)]",0,Any[],6
+pglib_opf_case39_epri__sad,148001.26,1.52005723,OPTIMAL,0,1,"Any[(7, 8)]",0,Any[],7
+pglib_opf_case57_ieee__sad,38567.85,27.38361297,OPTIMAL,0.00009,0,Any[],0,Any[],8
+pglib_opf_case73_ieee_rts__sad,223497.89,295.5390822,OPTIMAL,0,0,Any[],0,Any[],9
+pglib_opf_case89_pegase__sad,NaN,10804.81228,TIME_LIMIT, , , , , ,10
+pglib_opf_case118_ieee__sad,98014.94,7131.116508,OPTIMAL,0.00008,10,"Any[(47, 49), (27, 32), (103, 104), (41, 42), (56, 57), (62, 66), (34, 37), (75, 77), (76, 118), (66, 67)]",0,Any[],11
+pglib_opf_case162_ieee_dtc__sad,102001.1888,7203.82934,TIME_LIMIT,0.003791,6,"Any[(60, 62), (78, 80), (37, 126), (120, 128), (56, 67), (13, 15)]",0,Any[],12
+pglib_opf_case179_goc__sad,755065.43,1957.440004,OPTIMAL,0.0001,10,"Any[(99, 100), (129, 140), (63, 75), (123, 121), (133, 134), (139, 131), (68, 74), (57, 61), (126, 133), (123, 137)]",0,Any[],12
+pglib_opf_case200_activ__sad,27556.73,907.6369802,OPTIMAL,0.00008,0,Any[],0,Any[],13
+pglib_opf_case240_pserc__sad,3260000,10800.39066,TIME_LIMIT,0.00175,14,"Any[(130, 131), (209, 211), (87, 150), (47, 48), (77, 78), (51, 53), (115, 116), (53, 77), (141, 150), (137, 150), (88, 96), (178, 183), (113, 127), (234, 235)]",0,Any[],14
+pglib_opf_case300_ieee__sad,555503.0539,7203.060405,TIME_LIMIT,0.023884,13,"Any[(39, 77), (202, 204), (109, 125), (183, 184), (53, 54), (136, 133), (173, 220), (219, 248), (246, 250), (34, 39), (295, 7), (183, 187), (157, 146)]",0,Any[],16
+pglib_opf_case3_lmbd__api,10803.41642,0.041423232,OPTIMAL,0,0,Any[],0,Any[],25
+pglib_opf_case5_pjm__api,73255.46,0.130195506,OPTIMAL,0.00009,0,Any[],0,Any[],16
+pglib_opf_case14_ieee__api,5691.8,0.930871117,OPTIMAL,0.00007,0,Any[],0,Any[],17
+pglib_opf_case24_ieee_rts__api,119888.62,5.112848024,OPTIMAL,0,1,"Any[(4, 9)]",0,Any[],18
+pglib_opf_case30_as__api,2768.02,10.80900692,OPTIMAL,0.00008,0,Any[],0,Any[],19
+pglib_opf_case30_ieee__api,17060.28,1.754867983,OPTIMAL,0,0,Any[],0,Any[],20
+pglib_opf_case39_epri__api,245448.8,0.850483864,OPTIMAL,0.00002,0,Any[],0,Any[],21
+pglib_opf_case57_ieee__api,49251.13,8.020204637,OPTIMAL,0.00007,0,Any[],0,Any[],22
+pglib_opf_case73_ieee_rts__api,380415.34,170.7367728,OPTIMAL,0,2,"Any[(42, 45), (18, 21)]",0,Any[],23
+pglib_opf_case89_pegase__api,NaN,10810.6561,TIME_LIMIT, , , , , ,24
+pglib_opf_case118_ieee__api,170533.85,346.4049698,OPTIMAL,0.00009,2,"Any[(56, 57), (55, 59)]",0,Any[],25
+pglib_opf_case162_ieee_dtc__api,115747.28,7200.744607,TIME_LIMIT,0.00057,6,"Any[(27, 127), (21, 127), (8, 13), (65, 126), (60, 126), (30, 32)]",0,Any[],26
+pglib_opf_case179_goc__api,1820949.09,125.2794393,OPTIMAL,0.00003,6,"Any[(7, 20), (123, 121), (9, 10), (8, 20), (126, 133), (3, 20)]",0,Any[],27
+pglib_opf_case200_activ__api,35693.87,287.0418917,OPTIMAL,0.00006,1,"Any[(27, 158)]",0,Any[],28
+pglib_opf_case240_pserc__api,4612209.49,7200.30319,TIME_LIMIT,0.00039,10,"Any[(13, 77), (209, 211), (34, 77), (127, 129), (172, 173), (164, 165), (10, 11), (175, 176), (161, 184), (113, 120)]",0,Any[],29
+pglib_opf_case300_ieee__api,679404.43,2001.784832,OPTIMAL,0.00008,3,"Any[(183, 184), (117, 119), (28, 30)]",0,Any[],30
+pglib_opf_case3_lmbd,5756.46487,0.071119151,OPTIMAL,0.000036,0,Any[],0,Any[],49
+pglib_opf_case5_pjm,15001.86,0.174959336,OPTIMAL,0,0,Any[],0,Any[],32
+pglib_opf_case14_ieee,2175.7,1.373926422,OPTIMAL,0.00001,0,Any[],0,Any[],33
+pglib_opf_case24_ieee_rts,63344.58,6.343078521,OPTIMAL,0.00007,0,Any[],0,Any[],34
+pglib_opf_case30_as,802.68,13.86233636,OPTIMAL,0.00008,0,Any[],0,Any[],35
+pglib_opf_case30_ieee,6676.24,2.104561266,OPTIMAL,0.00008,0,Any[],0,Any[],36
+pglib_opf_case39_epri,137664.02,0.746464327,OPTIMAL,0.00008,0,Any[],0,Any[],37
+pglib_opf_case57_ieee,37529.65,8.66726764,OPTIMAL,0.00009,1,"Any[(57, 56)]",0,Any[],38
+pglib_opf_case73_ieee_rts,189706.22,79.96857903,OPTIMAL,0.00005,0,Any[],0,Any[],39
+pglib_opf_case89_pegase,NaN,10804.94558,TIME_LIMIT, , , , , ,40
+pglib_opf_case118_ieee,96427.58,370.2617297,OPTIMAL,0.00007,3,"Any[(47, 49), (71, 72), (49, 69)]",0,Any[],41
+pglib_opf_case162_ieee_dtc,101936.6581,7202.094598,TIME_LIMIT,0.003167,12,"Any[(37, 127), (27, 125), (22, 38), (12, 132), (94, 103), (113, 132), (78, 80), (95, 97), (59, 61), (37, 39), (56, 67), (65, 126)]",0,Any[],44
+pglib_opf_case179_goc,753134.39,46.19867243,OPTIMAL,0.00009,0,Any[],0,Any[],42
+pglib_opf_case200_activ,27556.65,90.80916014,OPTIMAL,0.00009,0,Any[],0,Any[],43
+pglib_opf_case240_pserc,3238965.24,5421.747056,OPTIMAL,0.000094,9,"Any[(13, 77), (34, 77), (115, 116), (129, 235), (141, 150), (178, 183), (87, 88), (234, 235), (161, 184)]",0,Any[],44
+pglib_opf_case300_ieee,NaN,7201.378037,TIME_LIMIT, , , , , ,48
+,,,,,,,,,
+pglib_opf_case500_goc__sad,NaN,3896.023892,INFEASIBLE_OR_UNBOUNDED, , , , , ,15
+pglib_opf_case588_sdet__sad,NaN,10800.33568,TIME_LIMIT, , , , , ,16
+pglib_opf_case793_goc__sad,268916.64,10800.8173,TIME_LIMIT,0.018031,20,"Any[(470, 793), (205, 224), (722, 738), (146, 147), (502, 503), (601, 602), (299, 354), (745, 746), (444, 455), (597, 596), (340, 343), (148, 149), (681, 699), (659, 693), (627, 628), (527, 585), (601, 654), (194, 275), (787, 788), (325, 353)]",0,Any[],17
+pglib_opf_case1354_pegase__sad,1239701.21,10801.03264,TIME_LIMIT,0.000896,0,Any[],0,Any[],18
+pglib_opf_case1888_rte__sad,NaN,10801.26924,TIME_LIMIT, , , , , ,19
+pglib_opf_case1951_rte__sad,NaN,10801.71608,TIME_LIMIT, , , , , ,20
+pglib_opf_case2000_goc__sad,979501.39,10802.05813,TIME_LIMIT,0.650853,0,Any[],0,Any[],21
+pglib_opf_case500_goc__api,668617.89,753.2176555,OPTIMAL,0,0,Any[],0,Any[],39
+pglib_opf_case588_sdet__api,389286.66,10800.21642,TIME_LIMIT,0.000179,7,"Any[(554, 555), (445, 468), (299, 321), (491, 492), (502, 523), (40, 41), (104, 105)]",0,Any[],40
+pglib_opf_case793_goc__api,276754.63,10801.0392,TIME_LIMIT,0.002735,19,"Any[(117, 118), (59, 97), (580, 582), (87, 110), (619, 643), (638, 640), (370, 379), (444, 455), (317, 344), (597, 596), (340, 343), (787, 656), (146, 148), (594, 596), (634, 646), (652, 653), (467, 477), (625, 627), (622, 644)]",0,Any[],41
+pglib_opf_case1354_pegase__api,1490268.61,10813.9518,TIME_LIMIT,0.000232,0,Any[],0,Any[],42
+pglib_opf_case1888_rte__api,NaN,10801.28806,TIME_LIMIT, , , , , ,43
+pglib_opf_case1951_rte__api,NaN,10801.27983,TIME_LIMIT, , , , , ,44
+pglib_opf_case2000_goc__api,1438342.47,286.9452534,OPTIMAL,0,0,Any[],0,Any[],45
+pglib_opf_case2312_goc__api,NaN,10801.04182,TIME_LIMIT, , , , , ,46
+pglib_opf_case500_goc,NaN,10205.68848,INFEASIBLE_OR_UNBOUNDED, , , , , ,61
+pglib_opf_case588_sdet,307164.36,10800.49256,TIME_LIMIT,0.000619,10,"Any[(445, 468), (530, 531), (116, 119), (556, 557), (128, 129), (47, 58), (105, 106), (112, 123), (487, 495), (63, 64)]",0,Any[],62
+pglib_opf_case793_goc,256772.4,10800.42821,TIME_LIMIT,0.000167,6,"Any[(146, 147), (502, 503), (759, 776), (352, 353), (627, 628), (372, 377)]",0,Any[],63
+pglib_opf_case1354_pegase,1239327.24,10801.36854,TIME_LIMIT,0.000567,0,Any[],0,Any[],64
+pglib_opf_case1888_rte,NaN,10801.27007,TIME_LIMIT, , , , , ,65
+pglib_opf_case1951_rte,NaN,10801.15289,TIME_LIMIT, , , , , ,66
+pglib_opf_case2000_goc,NaN,10801.78607,TIME_LIMIT, , , , , ,67
+pglib_opf_case2312_goc,NaN,10800.85703,TIME_LIMIT, , , , , ,68

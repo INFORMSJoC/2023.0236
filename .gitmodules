@@ -1,0 +1,6 @@
+[submodule "src/PowerModels.jl"]
+	path = src/PowerModels.jl
+	url = https://github.com/lanl-ansi/PowerModels.jl
+[submodule "data/pglib-opf"]
+	path = data/pglib-opf
+	url = https://github.com/power-grid-lib/pglib-opf
