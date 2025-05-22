@@ -17,15 +17,15 @@ https://doi.org/10.1287/ijoc.2023.0236.cd
 Below is the BibTex for citing this snapshot of the repository.
 
 ```bibtex
-@article{ACOTS_GuoNagarajanBodur2025,
-  author =        {Cheng Guo, Harsha Nagarajan, Merve Bodur},
-  publisher =     {INFORMS Journal on Computing},
-  title =         {Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem},
-  year =          {2025},
-  doi =           {https://doi.org/10.1287/ijoc.2023.0236.cd},
-  url =           {https://github.com/INFORMSJoC/2023.0236},
-  note =          {Available for download at https://github.com/INFORMSJoC/2023.0236},
-}  
+@misc{guo2025acots,
+  author =     {Guo, Cheng and Nagarajan, Harsha and Bodur, Merve},
+  publisher =  {INFORMS Journal on Computing},
+  title =      {Tightening Quadratic Convex Relaxations for the AC Optimal Transmission Switching Problem},
+  year =       {2025},
+  doi =        {10.1287/ijoc.2023.0236.cd},
+  url = {https://github.com/INFORMSJoC/2023.0236},
+  note =       {Available for download at https://github.com/INFORMSJoC/2023.0236},
+}
 ```
 
 ## Description
